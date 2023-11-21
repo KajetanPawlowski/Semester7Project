@@ -65,6 +65,7 @@ public class SurveyLogic : ISurveyLogic
         await _surveyDao.UpdateAsync(toUpdate);
 
         return result;
+        
     }
 
     public Task<Survey> CreateSurvey(CreateSurveyDTO dto)
