@@ -5,6 +5,7 @@ namespace HttpClients.Interfaces;
 
 public interface IAuthHttpClient
 {
+    //Using User Logic
     public Task LoginAsync(string userMail, string password);
     public Task LogoutAsync(string userMail);
     public Task RegisterAsync(string userMail, string password);
