@@ -7,10 +7,10 @@ public interface ISurveyHttpClient
 {
     //Using Risk Logic
     Task<List<RiskCategory>> GetCategoriesAsync();
-    Task<List<IRisk>> GetGenericRisksAsync(int categoryId);
+    Task<List<Risk>> GetGenericRisksAsync(int categoryId);
     Task<List<string>> GetRiskAttributesTypesAsync();
     Task<List<string>> GetRiskAttributesAsync(string attributeType);
-    Task<SpecificRisk> QualifyRiskAsync(IRisk risk, List<RiskAttribute> attributes);
+    Task<Risk> QualifyRiskAsync(Risk risk, List<RiskAttribute> attributes);
     
     //Using Survey Logic
     Task<List<Question>> GetQuestionsAsync(int supplierId);
@@ -19,7 +19,7 @@ public interface ISurveyHttpClient
     
     //Using Supplier Logic
     Task AssignCategoryAsync(int supplierId, int categoryId);
-    Task<List<SpecificRisk>> AddSpecificRiskAsync(int supplierId, SpecificRisk specificRisk);
+    Task<List<Risk>> AddSpecificRiskAsync(int supplierId, Risk specificRisk);
     
     //Using User Logic 
     
