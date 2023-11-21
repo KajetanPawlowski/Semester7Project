@@ -7,11 +7,23 @@ namespace Application.Logic;
 
 public class UserLogic : IUserLogic
 {
-    private readonly IRiskCategoryDAO riskCategoryDao;
-
-    public UserLogic(IRiskCategoryDAO dao)
+    public Task<User> RegisterUserAsync(string userMail, string password)
     {
-        riskCategoryDao = dao;
+        throw new NotImplementedException();
     }
-    
+
+    public Task<User> ValidateUserAsync(string userMail, string password)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<User?> GetByIdAsync(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<User?> GetByUserMailAsync(string userMail)
+    {
+        throw new NotImplementedException();
+    }
 }
