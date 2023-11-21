@@ -18,12 +18,12 @@ public class JwtHttpClient : IAuthHttpClient
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = null!;
     
     
-    public async Task LoginAsync(string username, string password)
+    public async Task LoginAsync(string userMail, string password)
     {
         
         UserLoginDTO dto = new()
         {
-            Username = username,
+            UserMail = userMail,
             Password = password
         };
         
@@ -54,11 +54,11 @@ public class JwtHttpClient : IAuthHttpClient
         return Task.CompletedTask;
     }
 
-    public async Task RegisterAsync(string username, string password)
+    public async Task RegisterAsync(string userMail, string password)
     {
         UserLoginDTO dto = new()
         {
-            Username = username,
+            UserMail = userMail,
             Password = password
         };
         string dtoAsJson = JsonSerializer.Serialize(dto);
