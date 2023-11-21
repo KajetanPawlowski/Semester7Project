@@ -27,21 +27,33 @@ public class RiskLogic : IRiskLogic
         {
             throw new Exception("Risk Already Exists!");
         }
-        Risk genericRisk = new Risk();
-        genericRisk.Name = riskName;
-        genericRisk.Category = await GetRiskCategoryById(riskCategoryId);
+        Risk genericRisk = new Risk
+        {
+            Name = riskName,
+            Category = await GetRiskCategoryById(riskCategoryId)
+        };
         return await _riskDao.CreateAsync(genericRisk);
 
     }
 
     public Task<RiskAttribute> CreateRiskAttributeFromFile(string type, int score, string description)
     {
-        throw new NotImplementedException();
+        RiskAttribute attribute = new RiskAttribute
+        {
+            AttributeType = type,
+            Score = score,
+            Description = description
+        };
+        return _riskAttributeDao.CreateAsync(attribute);
     }
 
     public Task<RiskCategory> CreateRiskCategoryFromFile(string name)
     {
-        throw new NotImplementedException();
+        RiskCategory category = new()
+        {
+            CategoryName = name
+        };
+        return _riskCategoryDao.CreateAsync(category);
     }
 
     public Task<RiskCategory> GetRiskCategoryById(int categoryId)
@@ -80,6 +92,10 @@ public class RiskLogic : IRiskLogic
     private async Task ValidateRiskAttributes(List<RiskAttribute> attributes)
     {
         List<string> attributeTypes = await _riskAttributeDao.GetAttributeTypesAsync();
+        if (attributeTypes.Count != attributes.Count)
+        {
+            throw new Exception("Attribute Validation failed - wrong No of attributes");
+        }
 
         // Use a dictionary to track whether each attribute type is encountered
         Dictionary<string, bool> encounteredTypes = attributeTypes.ToDictionary(type => type, type => false);
