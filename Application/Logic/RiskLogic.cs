@@ -16,26 +16,40 @@ public class RiskLogic : IRiskLogic
         _riskAttributeDao = riskAttributeDao;
         _riskCategoryDao = riskCategoryDao;
     }
-    public void CreateFromFile(string type, int score, string description)
+
+
+    public Task<RiskAttribute> CreateRiskAttributeFromFile(string type, int score, string description)
     {
-        RiskAttribute attribute = new RiskAttribute();
-        attribute.AttributeType = type;
-        attribute.Score = score;
-        attribute.Description = description;
-        _riskAttributeDao.CreateAsync(attribute);
-    }
-    public async Task<RiskCategory> CreateFromFile(string name)
-    {
-        return await _riskCategoryDao.CreateAsync(name);
+        throw new NotImplementedException();
     }
 
-    public async Task<List<RiskCategory>> GetRiskCategories(RiskCategoriesSearchParamDTO dto)
+    public Task<RiskCategory> CreateRiskCategoryFromFile(string name)
     {
-        return await _riskCategoryDao.GetCategoriesAsync(dto);
+        throw new NotImplementedException();
     }
 
-    public async Task<RiskCategory> GetById(int id)
+    public Task<RiskCategory> GetRiskCategoryById(int? categoryId)
     {
-        return await _riskCategoryDao.GetCategoryById(id);
+        throw new NotImplementedException();
+    }
+
+    public Task<List<IRisk>> GetGenericRiskByCategory(int categoryId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<RiskAttribute>> GetRiskAttributes()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<RiskCategory>> GetRiskCategories(string categoryNameContent)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<SpecificRisk> QualifyRisk(IRisk risk, List<RiskAttribute> attributes)
+    {
+        throw new NotImplementedException();
     }
 }

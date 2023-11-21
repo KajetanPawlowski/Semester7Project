@@ -5,8 +5,12 @@ namespace Application.LogicInterface;
 
 public interface IRiskLogic
 {
-    void CreateFromFile(string type, int score, string description);
-    Task<RiskCategory> CreateFromFile(string name);
-    Task<List<RiskCategory>> GetRiskCategories(RiskCategoriesSearchParamDTO dto);
-    Task<RiskCategory> GetById(int id);
+    Task<RiskAttribute> CreateRiskAttributeFromFile(string type, int score, string description);
+    Task<RiskCategory> CreateRiskCategoryFromFile(string name);
+    Task<RiskCategory> GetRiskCategoryById(int? categoryId);
+    Task<List<IRisk>> GetGenericRiskByCategory(int categoryId);
+    Task<List<RiskAttribute>> GetRiskAttributes();
+    Task<List<RiskCategory>> GetRiskCategories(string categoryNameContent);
+    Task<SpecificRisk> QualifyRisk(IRisk risk, List<RiskAttribute> attributes);
+
 }
