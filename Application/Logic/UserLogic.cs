@@ -7,23 +7,71 @@ namespace Application.Logic;
 
 public class UserLogic : IUserLogic
 {
-    public Task<User> RegisterUserAsync(UserLoginDTO dto)
+    private readonly IUserDAO _userDao;
+    public UserLogic(IUserDAO userDao)
     {
-        throw new NotImplementedException();
+        _userDao = userDao;
+        
+    }
+    public async Task<User> RegisterUserAsync(UserLoginDTO dto)
+    {
+        User? existing = await _userDao.GetByMailAsync(dto.UserMail);
+        if (existing != null)
+            throw new Exception("UserMail already in used!");
+        
+        ValidateRegistrationData(dto);
+        User toCreate = new User 
+        {
+            Mail = dto.UserMail,
+            Password = dto.Password,
+            Role = "woltSupplier"
+            
+        };
+    
+        User created = await _userDao.CreateAsync(toCreate);
+    
+        return created;
     }
 
-    public Task<User> ValidateUserAsync(UserLoginDTO dto)
+    public async Task<User> ValidateUserAsync(UserLoginDTO dto)
     {
-        throw new NotImplementedException();
+        User? existingUser = await _userDao.GetByMailAsync(dto.UserMail);
+        
+        if (existingUser == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        if (!existingUser.Password.Equals(dto.Password))
+        {
+            throw new Exception("Password mismatch");
+        }
+
+        return await Task.FromResult(existingUser);
     }
 
     public Task<User?> GetByIdAsync(int userId)
     {
-        throw new NotImplementedException();
+        return _userDao.GetByIdAsync(userId);
     }
 
     public Task<User?> GetByUserMailAsync(string userMail)
     {
-        throw new NotImplementedException();
+        return _userDao.GetByMailAsync(userMail);
+    }
+    
+    private static void ValidateRegistrationData(UserLoginDTO userToCreate)
+    {
+        string userMail = userToCreate.UserMail;
+        string password = userToCreate.Password;
+
+        if (userMail.Length < 3)
+            throw new Exception("User mail must be at least 3 characters!");
+        
+        if (password.Length < 3)
+            throw new Exception("Password must be at least 3 characters!");
+
+        if (password.Length > 15)
+            throw new Exception("Password must be less than 16 characters!");
     }
 }

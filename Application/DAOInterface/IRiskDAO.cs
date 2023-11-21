@@ -4,7 +4,10 @@ namespace Application.DAOInterface;
 
 public interface IRiskDAO
 {
-    Task<IRisk> CreateAsync(IRisk risk);
-    Task<IRisk?> GetByIdAsync(int riskId);
-    Task<List<IRisk>> GetAllAsync();
+    Task<Risk> CreateAsync(Risk risk);
+    Task<Risk> GetByIdAsync(int riskId);
+    Task<Risk> GetByRiskNameAsync(string riskNameContent);
+    Task<List<Risk>> GetByCategoryIdAsync(int riskCategoryId);
+    Task<List<Risk>> GetAllAsync();
+    Task<Risk> UpdateRisk(Risk specificRisk);
 }
