@@ -7,7 +7,7 @@ public class Survey
     public string Name { get; set; }
     public int SupplierId { get; set; }
     
-    public string CreatorMail { get; set; }
+    public int CreatorId { get; set; }
     public DateTime CreationTime { get; set; }
     
     public List<Question> Questions { get; set; }

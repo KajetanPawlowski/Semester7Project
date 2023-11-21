@@ -47,9 +47,17 @@ public class SurveyLogic : ISurveyLogic
         }
         return relevantQuestions;
     }
-
+    
+    public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)
+    {
+        //make sure all the questions already added!!!
+        await ValidateSurveyCreationDTO(dto);
+        throw new NotImplementedException();
+    }
+    
     public async Task<Question> AddQuestion(CreateQuestionDTO dto)
     {
+        //Add question each time new is created!!!
         await ValidateQuestionCreationDTO(dto);
         Question toCreate = new()
         {
@@ -58,39 +66,34 @@ public class SurveyLogic : ISurveyLogic
             Category = dto.RiskCategory,
             RelatedRisk = dto.RelatedRisk
         };
-        Question result = await _questionDao.CreateAsync(toCreate);
-        Survey toUpdate = await _surveyDao.GetByIdAsync(dto.SurveyId);
         
-        toUpdate.Questions.Add(result);
-        await _surveyDao.UpdateAsync(toUpdate);
-
-        return result;
-        
+        return await _questionDao.CreateAsync(toCreate);
     }
-
-    public Task<Survey> CreateSurvey(CreateSurveyDTO dto)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey)
     {
         throw new NotImplementedException();
     }
 
+    private async Task ValidateSurveyCreationDTO(CreateSurveyDTO dto)
+    {
+        foreach (Question question in dto.Questions)
+        {
+            if (question.Id == 0)
+            {
+                throw new Exception("Invalid Question ID");
+            } 
+            await _questionDao.GetByIdAsync(question.Id);
+            
+        }
+    }
     private async Task ValidateQuestionCreationDTO(CreateQuestionDTO dto)
     {
         try
         {
-            await _supplierDao.GetByIdAsync(dto.SupplierId);
-            await _surveyDao.GetByIdAsync(dto.SurveyId);
             await _riskDao.GetByIdAsync(dto.RelatedRisk.Id);
             await _riskCategoryDao.GetByIdAsync(dto.RiskCategory.CategoryId);
         }
-        catch (SurveyNotFound surveyNotFound)
-        {
-            //create new survey using supplier
-        }
+
         catch (RiskNotFound riskNotFound)
         {
             await _riskDao.CreateAsync(dto.RelatedRisk);
