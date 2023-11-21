@@ -9,7 +9,7 @@ public interface ISurveyHttpClient
     Task<List<RiskCategory>> GetCategoriesAsync();
     Task<List<Risk>> GetGenericRisksAsync(int categoryId);
     Task<List<string>> GetRiskAttributesTypesAsync();
-    Task<List<string>> GetRiskAttributesAsync(string attributeType);
+    Task<List<RiskAttribute>> GetRiskAttributesAsync(string attributeType);
     Task<Risk> QualifyRiskAsync(Risk risk, List<RiskAttribute> attributes);
     
     //Using Survey Logic
