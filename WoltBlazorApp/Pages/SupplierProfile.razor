@@ -1,0 +1,78 @@
+﻿@page "/SupplierProfile"
+@using HttpClients.Interfaces
+@using Domain.Model
+@using HttpClients.Implementations
+@inject ISupplierHttpClient SupplierHttpClient
+
+@inject NavigationManager navMgr
+
+<PageTitle>Supplier Profile</PageTitle>
+<h3>Surveys</h3>
+@if (surveys == null)
+{
+    <p>Load survey's data...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Survey Name</th>
+            <th>Creation Time</th>
+            <th>Answered Time</th>
+            <th>Answer Survey</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in surveys)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.CreationTime</td>
+                <td>@item.AnsweredTime</td>
+                <td><button class="feed-buttons answerSurveyBtn" onclick="@AnswerSurvey()"></button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}    
+
+
+@code {
+    private List<Survey> surveys = null;
+    private string msg = "";
+
+    private int supplierId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        supplierId = 1;
+        
+        await LoadSurveys();
+    }
+
+    private async Task LoadSurveys()
+    {
+        try
+        {
+            //surveys = await SupplierHttpClient.GetSurveys(supplierId);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task AnswerSurvey()
+    {
+        navMgr.NavigateTo("/AnswerSurvey");
+    }
+
+    private async Task LoadSurveyName()
+    {
+        
+    }
+
+}
