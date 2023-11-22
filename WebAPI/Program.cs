@@ -26,6 +26,9 @@ builder.Services.AddScoped<ISupplierDAO, SupplierInstantDAO>();
 builder.Services.AddScoped<IQuestionDAO, QuestionInstantDAO>();
 builder.Services.AddScoped<IRiskAttributeDAO, RiskAttributeInstantDAO>();
 builder.Services.AddScoped<IRiskCategoryDAO, RiskCategoryInstantDAO>();
+builder.Services.AddScoped<IRiskDAO, RiskInstantDAO>();
+builder.Services.AddScoped<IUserDAO, UserInstantDao>();
+builder.Services.AddScoped<ISurveyDAO, SurveyInstantDAO>();
 
 //Add Logic
 builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
