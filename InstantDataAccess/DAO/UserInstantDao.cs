@@ -7,7 +7,7 @@ public class UserInstantDao : IUserDAO
 {
     private readonly InstantDataContext context;
     
-    public UserInstantDao(InstantDataContainer context)
+    public UserInstantDao(InstantDataContext context)
     {
         this.context = this.context;
     }
