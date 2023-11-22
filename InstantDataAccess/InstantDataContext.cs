@@ -1,10 +1,11 @@
+using System.Text.Json;
 using Domain.Model;
 
 namespace InstantDataAccess;
 
 public class InstantDataContext
 {
-    // private const string filePath = "data.json";
+    private const string filePath = "data.json";
     private InstantDataContainer? dataContainer;
 
     public IList<Supplier> Suppliers
@@ -74,16 +75,32 @@ public class InstantDataContext
     private void LoadData()
     {
         if (dataContainer != null) return;
-       
-        dataContainer = new ()
+        
+        if (!File.Exists(filePath))
         {
-            Suppliers = new List<Supplier>(),
-            Risks = new List<Risk>(),
-            Surveys = new List<Survey>(),
-            Users = new List<User>(),
-                
-        };
-           
+            dataContainer = new ()
+            {
+                Suppliers = new List<Supplier>(),
+                Risks = new List<Risk>(),
+                Surveys = new List<Survey>(),
+                Users = new List<User>(),
+                Questions = new List<Question>(),
+                RiskAttributes = new List<RiskAttribute>(),
+                RiskCategories = new List<RiskCategory>()
+            };
+            return;
+        }
+        string content = File.ReadAllText(filePath);
+        dataContainer = JsonSerializer.Deserialize<InstantDataContainer>(content);
+    }
+    public void SaveChanges()
+    {
+        string serialized = JsonSerializer.Serialize(dataContainer, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+        File.WriteAllText(filePath, serialized);
+        dataContainer = null;
     }
     
 }
