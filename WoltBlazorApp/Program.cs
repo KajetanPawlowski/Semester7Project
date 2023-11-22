@@ -37,6 +37,7 @@ builder.Services.AddScoped(
 
 builder.Services.AddScoped<IAuthHttpClient, JwtHttpClient>();
 builder.Services.AddScoped<ISupplierHttpClient, SupplierHttpClient>();
+builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 
 

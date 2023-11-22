@@ -11,7 +11,6 @@ public class UserLogic : IUserLogic
     public UserLogic(IUserDAO userDao)
     {
         _userDao = userDao;
-        
     }
     public async Task<User> RegisterUserAsync(UserLoginDTO dto)
     {
@@ -59,7 +58,12 @@ public class UserLogic : IUserLogic
     {
         return _userDao.GetByMailAsync(userMail);
     }
-    
+
+    public Task<List<User>> GetUsersAsync()
+    {
+        return _userDao.GetAllAsync();
+    }
+
     private static void ValidateRegistrationData(UserLoginDTO userToCreate)
     {
         string userMail = userToCreate.UserMail;
