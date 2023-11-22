@@ -43,6 +43,34 @@ public class InstantDataContext
             
         }
     }
+    public IList<Risk> Risks
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.Risks;
+            
+        }
+    }
+
+    public IList<Survey> Surveys
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.Surveys;
+        }
+    }
+
+    public IList<User> Users
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.Users;
+        }
+    }
+
     private void LoadData()
     {
         if (dataContainer != null) return;
@@ -50,6 +78,9 @@ public class InstantDataContext
         dataContainer = new ()
         {
             Suppliers = new List<Supplier>(),
+            Risks = new List<Risk>(),
+            Surveys = new List<Survey>(),
+            Users = new List<User>(),
                 
         };
            
