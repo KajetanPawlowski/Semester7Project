@@ -1,9 +1,65 @@
 ﻿@page "/"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISupplierHttpClient SupplierHttpClient
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home page- Wolt</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>List of Suppliers</h1>
 
-Welcome to your new app.
+@if (_suppliers == null)
+{
+    <p>Loading suppliers' data....</p>
+}
+else if (!_suppliers.Any())
+{
+    <p>No Users to display</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>User id</th>
+            <th>Username</th>
+            <th># of Posts</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in _suppliers)
+        {
+            <tr>
+                <td>@item.CompanyName</td>
+                <td>@item.Country</td>
+                <td>@item.RepresentativeId</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+
+@code {
+    private List<Supplier>? _suppliers;
+    private string msg = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSuppliers();
+    }
+
+    private async Task LoadSuppliers()
+    {
+        try
+        {
+            _suppliers = await SupplierHttpClient.GetSuppliers();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = "Failed to load data";
+        }
+    }
+}
