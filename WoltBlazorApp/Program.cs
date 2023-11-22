@@ -3,12 +3,16 @@ using Application.DAOInterface;
 using Application.Logic;
 using Application.LogicInterface;
 using Domain.Auth;
+using HttpClients.Implementations;
+using HttpClients.Interfaces;
 using InstantDataAccess;
 using InstantDataAccess.DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
+using WoltBlazorApp.Auth;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,32 +22,22 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 
-//Add DataStorage
-builder.Services.AddScoped<InstantDataContext>();
 
-//Add DAOS
-builder.Services.AddScoped<ISupplierDAO, SupplierInstantDAO>();
-
-//Add Logic
-builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
-
-
+//From Domain
 AuthorizationPolicies.AddPolicies(builder.Services);
-//Authorisation Stuff
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
 
+//HTTP Client
+builder.Services.AddScoped(
+    sp =>
+        new HttpClient
+        {
+            BaseAddress = new Uri("http://localhost:5038")
+        }
+);
+
+builder.Services.AddScoped<IAuthHttpClient, JwtHttpClient>();
+builder.Services.AddScoped<ISupplierHttpClient, SupplierHttpClient>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 
 
 var app = builder.Build();
@@ -59,10 +53,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
 
 app.UseRouting();
 

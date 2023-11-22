@@ -16,7 +16,33 @@ public class InstantDataContext
             
         }
     }
-    
+    public IList<Question> Questions
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.Questions;
+            
+        }
+    }
+    public IList<RiskAttribute> RiskAttributes
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.RiskAttributes;
+            
+        }
+    }
+    public IList<RiskCategory> RiskCategories
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.RiskCategories;
+            
+        }
+    }
     public IList<Risk> Risks
     {
         get
@@ -44,7 +70,7 @@ public class InstantDataContext
             return dataContainer!.Users;
         }
     }
-    
+
     private void LoadData()
     {
         if (dataContainer != null) return;
