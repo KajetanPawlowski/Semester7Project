@@ -1,4 +1,6 @@
+using Application.Logic;
 using Application.LogicInterface;
+using Domain.DTO;
 using Domain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,21 @@ public class SupplierController : ControllerBase
         {
             List<Supplier> suppliers = await _supplierLogic.GetSuppliersAsync();
             return Ok(suppliers);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    //Post Supplier
+    [HttpPost,  AllowAnonymous]
+    public async Task<ActionResult<Supplier>> CreateAsync(SupplierCreationDTO dto)
+    {
+        try
+        {
+            Supplier supplier = await _supplierLogic.CreateSupplierAsync(dto);
+            return Created($"/Supplier/{supplier.Id}", supplier);
         }
         catch (Exception e)
         {
