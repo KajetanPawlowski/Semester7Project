@@ -23,6 +23,7 @@ public class SupplierInstantDAO : ISupplierDAO
         supplier.Id = nextId;
         
         context.Suppliers.Add(supplier);
+        context.SaveChanges();
         
         return Task.FromResult(supplier);
     }
