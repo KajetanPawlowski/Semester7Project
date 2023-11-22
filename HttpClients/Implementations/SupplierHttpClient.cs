@@ -46,6 +46,11 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers;
     }
 
+    public Task<string> GetSupplierRepMail(int repId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Survey> ResendSurvey(int surveyId)
     {
         throw new NotImplementedException();

@@ -2,6 +2,7 @@
 @using Domain.Model
 @using HttpClients.Interfaces
 @inject ISupplierHttpClient SupplierHttpClient
+@inject IUserHttpClient UserHttpClient
 
 <PageTitle>Home page- Wolt</PageTitle>
 
@@ -23,7 +24,7 @@ else
         <tr>
             <th>Company Name</th>
             <th>Country</th>
-            <th>Representative Id</th>
+            <th>Representative Mail</th>
         </tr>
         </thead>
         <tbody>
@@ -32,7 +33,7 @@ else
             <tr>
                 <td>@item.CompanyName</td>
                 <td>@item.Country</td>
-                <td>@item.RepresentativeId</td>
+                <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
             </tr>
         }
         </tbody>
@@ -42,6 +43,7 @@ else
 
 @code {
     private List<Supplier>? _suppliers;
+    private List<User>? _userMails;
     private string msg = "";
 
     protected override async Task OnInitializedAsync()
@@ -54,6 +56,7 @@ else
         try
         {
             _suppliers = await SupplierHttpClient.GetSuppliers();
+            _userMails = await UserHttpClient.GetUsersAsync();
         }
         catch (Exception e)
         {

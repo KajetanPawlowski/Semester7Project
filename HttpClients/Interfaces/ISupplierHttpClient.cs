@@ -16,6 +16,7 @@ public interface ISupplierHttpClient
     public Task<List<Supplier>> GetSuppliers();
     
     //Using User Logic
+    public Task<string> GetSupplierRepMail(int repId);
     
     //Using Several
     
