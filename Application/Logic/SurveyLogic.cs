@@ -76,15 +76,7 @@ public class SurveyLogic : ISurveyLogic
 
     private async Task ValidateSurveyCreationDTO(CreateSurveyDTO dto)
     {
-        foreach (Question question in dto.Questions)
-        {
-            if (question.Id == 0)
-            {
-                throw new Exception("Invalid Question ID");
-            } 
-            await _questionDao.GetByIdAsync(question.Id);
-            
-        }
+        //validate if the questions exist
     }
     private async Task ValidateQuestionCreationDTO(CreateQuestionDTO dto)
     {

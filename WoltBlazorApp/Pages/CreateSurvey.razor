@@ -7,48 +7,58 @@
 @inject NavigationManager navMgr
 
 
-<h1>CreateSurvey</h1>
-
-<div class="card">
-    <div class="card-title">
-        <button class="btn btn-success" @onclick="@AddQuestion"> Add Question </button>
-        <QuestionCard> </QuestionCard>
+<h1>Create Survey</h1>
+<div class="card-container">
+    @if (addingNew)
+    {
+        <CreateQuestionCard CreateQuestionCallback="AddQuestionToSurvey" />
+    }
+    else
+    {
+        <div class="card">
+            <button @onclick="AddQuestion">Add Question</button>
+        </div>
+    }
+    @foreach (var item in newSurvey.Questions)
+    {
+        <QuestionCard question="@item"/>
+    }
+    <div class="card">
+        <button @onclick="SaveSurvey">Save Survey</button>
     </div>
 </div>
 
 
 
-<button @onclick="SaveSurvey">Save Survey</button>
 
 
 @code {
-    private List<Question> questions { get; set; } = new List<Question>();
+    private List<Question> questions { get; set; }
     private CreateSurveyDTO newSurvey;
 
-    private Question newQuestion = null;
-    
-    private void HandleChoiceSelected(string selectedChoice)
-    {
-    // Handle the selected choice for the current question
-        Console.WriteLine($"Selected choice: {selectedChoice}");
-    }
+    bool addingNew = false;
 
-    private void AddQuestionToFinalList(Question question)
+    protected override void OnInitialized()
     {
-        newSurvey.Questions.Add(question);
+        newSurvey = new CreateSurveyDTO();
+        newSurvey.Questions = new List<CreateQuestionDTO>();
     }
 
     private void AddQuestion()
     {
-        questions.Add(newQuestion);
-        AddQuestionToFinalList(newQuestion);
-        newQuestion = null;
+        addingNew = true;
+    }
+    private void AddQuestionToSurvey(CreateQuestionDTO newQuestion)
+    {
+        newSurvey.Questions.Add(newQuestion);
+        addingNew = false;
+        StateHasChanged();
+        
     }
 
     private async Task SaveSurvey()
     {
-        Survey survey = await _surveyHttpClient.CreateSurveyAsync(newSurvey);
-        navMgr.NavigateTo("/");
+        
     }
 
 }

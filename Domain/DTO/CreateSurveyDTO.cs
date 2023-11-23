@@ -4,10 +4,10 @@ namespace Domain.DTO;
 
 public class CreateSurveyDTO
 {
-    public string Name { get; init; }
-    public int SupplierId { get; init; }
+    public string Name { get; set; }
+    public int SupplierId { get; set; }
     
-    public int CreatorId { get; init; }
+    public int CreatorId { get; set; }
     
-    public List<Question> Questions { get; init; }
+    public List<CreateQuestionDTO> Questions { get; set; }
 }
