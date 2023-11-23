@@ -1,0 +1,77 @@
+@page "/AssessSupplier/{SupplierId}"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISupplierHttpClient _supplierHttpClient
+<h3>Assess Suppliers</h3>
+<div class="card-container">
+    @if (supplier == null)
+    {
+        <p> Loading... </p>
+    }
+    else
+    {
+
+        <div class="card">
+
+            <div class="card-title">
+                <h6>Supplier Products:</h6>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Selects Category</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var product in supplier.SuppliedProducts)
+                    {
+                        <tr>
+                            <td>@product</td>
+                            <td>
+                                <select @bind="categoriesSelection[product]">
+                                    @foreach (var category in _categories)
+                                    {
+                                        <option value="@category">@category</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <button >
+                    Next
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    //Cascading parameter
+    [Parameter] 
+    public string SupplierId { get; set; }
+    
+    Supplier? supplier;
+    List<RiskCategory> _categories = new List<RiskCategory>();
+    Dictionary<string, RiskCategory> categoriesSelection = new Dictionary<string, RiskCategory>();
+    
+    
+    protected override async void OnInitialized()
+    {
+        await LoadSupplier();
+        Console.WriteLine("invoked");
+    }
+
+    private async Task LoadSupplier()
+    {
+        int SupplierIdInt = int.Parse(SupplierId);
+        supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+    }
+
+
+}

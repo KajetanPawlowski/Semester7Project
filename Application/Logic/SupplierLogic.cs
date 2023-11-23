@@ -46,6 +46,11 @@ public class SupplierLogic : ISupplierLogic
         return _supplierDao.GetByIdAsync(_userDao.GetByMailAsync(supplierMail).Id);
     }
 
+    public Task<Supplier> GetSupplierById(int supplierId)
+    {
+        return _supplierDao.GetByIdAsync(supplierId);
+    }
+
     public Task<List<Survey>> GetSurveysAsync(int supplierId)
     {
         return _surveyDao.GetSupplierSurveysAsync(supplierId);
