@@ -13,31 +13,65 @@ public class RiskInstantDAO : IRiskDAO
     }
     public Task<Risk> CreateAsync(Risk risk)
     {
-        throw new NotImplementedException();
+        int riskId = 1;
+        if (context.Risks.Any())
+        {
+            riskId = context.Risks.Max(r => r.Id);
+            riskId++;
+        }
+
+        risk.Id = riskId;
+        context.Risks.Add(risk);
+        context.SaveChanges();
+
+        return Task.FromResult(risk);
     }
 
-    public Task<Risk> GetByIdAsync(int riskId)
+    public async Task<Risk> GetByIdAsync(int riskId)
     {
-        throw new NotImplementedException();
+        Risk? existing = context.Risks.FirstOrDefault(r =>
+            r.Id == riskId);
+        if(existing == null)
+        {
+            throw new Exception("Risk not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<Risk> GetByRiskNameAsync(string riskNameContent)
     {
-        throw new NotImplementedException();
+        Risk risk = context.Risks.FirstOrDefault(r => r.Name.Equals(riskNameContent));
+        return Task.FromResult(risk);
+        
     }
 
     public Task<List<Risk>> GetByCategoryIdAsync(int riskCategoryId)
     {
-        throw new NotImplementedException();
+        List<Risk> risks = context.Risks
+            .Where(r => r.Category.CategoryId.Equals(riskCategoryId))
+            .ToList();
+
+        return Task.FromResult(risks);
     }
 
     public Task<List<Risk>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(context.Risks.ToList());
     }
 
     public Task<Risk> UpdateRisk(Risk specificRisk)
     {
-        throw new NotImplementedException();
+        Risk? existing = context.Risks.FirstOrDefault(r=> r.Id== specificRisk.Id);
+        if (existing == null)
+        {
+            throw new Exception("Risk not found");
+        }
+        context.Risks.Remove(existing);
+        context.Risks.Add(specificRisk);
+        
+        
+        context.SaveChanges();
+        return (Task<Risk>)Task.CompletedTask;
     }
 }

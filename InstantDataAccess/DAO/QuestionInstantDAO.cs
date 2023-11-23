@@ -13,26 +13,52 @@ public class QuestionInstantDAO : IQuestionDAO
     }
     public Task<Question> CreateAsync(Question question)
     {
-        throw new NotImplementedException();
+        int questionId = 1;
+        if (context.Questions.Any())
+        {
+            questionId = context.Questions.Max(q => q.Id);
+            questionId++;
+        }
+
+        question.Id = questionId;
+        context.Questions.Add(question);
+        context.SaveChanges();
+
+        return Task.FromResult(question);
     }
 
-    public Task<Question> GetByIdAsync(int questionId)
+    public async Task<Question> GetByIdAsync(int questionId)
     {
-        throw new NotImplementedException();
+        Question? existing = context.Questions.FirstOrDefault(q =>
+            q.Id == questionId);
+        if(existing == null)
+        {
+            throw new Exception("Question not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<IEnumerable<Question>> GetByCategory(RiskCategory category)
     {
-        throw new NotImplementedException();
+        IEnumerable<Question> questions = context.Questions
+            .Where(q => q.Category.Equals(category))
+            .ToList();
+
+        return Task.FromResult(questions);
     }
 
     public Task<IEnumerable<Question>> GetByAttribute(RiskAttribute attribute)
     {
-        throw new NotImplementedException();
+        IEnumerable<Question> questions = context.Questions
+            .Where(q => q.RelatedRisk.RiskAttributes.Equals(attribute))
+            .ToList();
+
+        return Task.FromResult(questions);
     }
 
     public Task<List<Question>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(context.Questions.ToList());
     }
 }

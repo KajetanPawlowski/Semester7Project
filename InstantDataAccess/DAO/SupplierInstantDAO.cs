@@ -28,9 +28,16 @@ public class SupplierInstantDAO : ISupplierDAO
         return Task.FromResult(supplier);
     }
 
-    public Task<Supplier> GetByIdAsync(int supplierId)
+    public async Task<Supplier> GetByIdAsync(int supplierId)
     {
-        throw new NotImplementedException();
+        Supplier? existing = context.Suppliers.FirstOrDefault(s =>
+            s.Id == supplierId);
+        if(existing == null)
+        {
+            throw new Exception("Supplier not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<List<Supplier>> GetAllAsync()
@@ -40,6 +47,16 @@ public class SupplierInstantDAO : ISupplierDAO
 
     public Task<Supplier> UpdateAsync(Supplier supplier)
     {
-        throw new NotImplementedException();
+        Supplier? existing = context.Suppliers.FirstOrDefault(s => s.Id== supplier.Id);
+        if (existing == null)
+        {
+            throw new Exception("Supplier not found");
+        }
+        context.Suppliers.Remove(existing);
+        context.Suppliers.Add(supplier);
+        
+        
+        context.SaveChanges();
+        return (Task<Supplier>)Task.CompletedTask;
     }
 }

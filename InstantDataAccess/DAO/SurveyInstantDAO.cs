@@ -14,26 +14,57 @@ public class SurveyInstantDAO : ISurveyDAO
     
     public Task<Survey> CreateAsync(Survey survey)
     {
-        throw new NotImplementedException();
+        int surveyId = 1;
+        if (context.Surveys.Any())
+        {
+            surveyId = context.Surveys.Max(s => s.Id);
+            surveyId++;
+        }
+
+        survey.Id = surveyId;
+        context.Surveys.Add(survey);
+        context.SaveChanges();
+
+        return Task.FromResult(survey);
     }
 
-    public Task<Survey> GetByIdAsync(int surveyId)
+    public async Task<Survey> GetByIdAsync(int surveyId)
     {
-        throw new NotImplementedException();
+        Survey? existing = context.Surveys.FirstOrDefault(s =>
+            s.Id == surveyId);
+        if(existing == null)
+        {
+            throw new Exception("Survey not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<List<Survey>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(context.Surveys.ToList());
     }
 
     public Task<List<Survey>> GetSupplierSurveysAsync(int supplierId)
     {
-        throw new NotImplementedException();
+        List<Survey> surveys = context.Surveys
+            .Where(s =>s.SupplierId == supplierId).ToList();
+
+        return Task.FromResult(surveys);
     }
 
     public Task<Survey> UpdateAsync(Survey survey)
     {
-        throw new NotImplementedException();
+        Survey? existing = context.Surveys.FirstOrDefault(s => s.Id== survey.Id);
+        if (existing == null)
+        {
+            throw new Exception("Survey not found");
+        }
+        context.Surveys.Remove(existing);
+        context.Surveys.Add(survey);
+        
+        
+        context.SaveChanges();
+        return (Task<Survey>)Task.CompletedTask;
     }
 }
