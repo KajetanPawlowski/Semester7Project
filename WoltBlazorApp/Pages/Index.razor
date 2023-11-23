@@ -3,6 +3,7 @@
 @using HttpClients.Interfaces
 @inject ISupplierHttpClient SupplierHttpClient
 @inject IUserHttpClient UserHttpClient
+@inject NavigationManager navMgr
 
 <PageTitle>Home page- Wolt</PageTitle>
 
@@ -15,7 +16,7 @@
 }
 else if (!_suppliers.Any())
 {
-    <p>No Suppliers to display</p>
+    <p>No Suppliers to display<button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button></p>
 }
 else
 {
@@ -38,6 +39,7 @@ else
         }
         </tbody>
     </table>
+    <button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
 }
 
 
@@ -63,5 +65,10 @@ else
             Console.WriteLine(e);
             msg = "Failed to load data";
         }
+    }
+
+    private async Task AddSupplier()
+    {
+        navMgr.NavigateTo("/AddSupplier");
     }
 }
