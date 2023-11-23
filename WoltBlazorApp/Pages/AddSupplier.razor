@@ -1,0 +1,201 @@
+@page "/AddSupplier"
+@using Domain.Model
+@using Domain.DTO
+@using HttpClients.Interfaces
+@using Microsoft.AspNetCore.Http.HttpResults
+@inject IUserHttpClient _userHttpClient
+<h3>Add Supplier</h3>
+
+<div class="card-container">
+    <div class="card">
+        <div class="card-title">
+            <h6>Supplier Details:</h6>
+        </div>
+        <div class="card-body" style="@StyleDisplay[0]">
+            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
+            <input type="text" placeholder="Country" @bind="toCreate.Country" />
+            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
+        </div>
+        <div class="card-footer" style="@StyleDisplay[0]">
+            <button @onclick="() => ShowNext(0)">
+                Next
+            </button>
+        </div>
+    </div>
+
+    @if (UserExist)
+    {
+        <div class="card">
+            <div class="card-title">
+                <h6>Rep Id:</h6>
+            </div>
+            <div class="card-body" style="@StyleDisplay[1]">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Representative Name</th>
+                            <th>Rep. Mail</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Users)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Mail</td>
+                                <td>
+                                    <button @onclick="() => SelectUser(user)">
+                                        Select User
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer" style="@StyleDisplay[1]">
+                <button @onclick="ShowAddUser">
+                    Add User
+                </button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-title">
+                <h6>Add User:</h6>
+            </div>
+            <div class="card-body" style="@StyleDisplay[1]">
+                <input type="text" placeholder="User" @bind="selectedUser.FullName" />
+                <!-- Add other input fields for user details -->
+            </div>
+            <div class="card-footer" style="@StyleDisplay[1]">
+                <button @onclick="() => ShowNext(1)">
+                    Save User
+                </button>
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-title">
+            <h6>Supplied Products:</h6>
+        </div>
+        <div class="card-body" style="@StyleDisplay[2]">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product" />
+                <button class="btn btn-success" @onclick="AddProduct">
+                    Add
+                </button>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Products)
+                        {
+                            <tr>
+                                <td>@product</td>
+                                <td>
+                                    @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
+                                    {
+                                        <button @onclick="() => AddProductToFinalList(product)">
+                                            Added
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button @onclick="() => AddProductToFinalList(product)">
+                                            Add to Supplier
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer" style="@StyleDisplay[2]">
+            <button @onclick="ShowSupplier">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Shuffling effect
+    private string[] StyleDisplay = new string[] { "display : block", "display : none", "display : none" };
+
+    private SupplierCreationDTO toCreate = new SupplierCreationDTO();
+    private List<User> Users = new List<User>
+    {
+        new User { Id = 1, FullName = "Maja" },
+        new User { Id = 2, FullName = "Kajetan" },
+        new User { Id = 3, FullName = "Alice" }
+    };
+    private bool UserExist = true;
+    private User selectedUser = new User();
+
+    private List<string> Products = new List<string> { "Fish", "Meat", "Vegetables" };
+    private string newProduct = "";
+
+    private void ShowNext(int current)
+    {
+        StyleDisplay[current] = "display : none";
+        StyleDisplay[current + 1] = "display : block";
+    }
+
+    private void ShowAddUser()
+    {
+        UserExist = false;
+    }
+
+    private void SelectUser(User user)
+    {
+        selectedUser = user;
+        toCreate.RepresentativeId = user.Id;
+        ShowNext(1);
+    }
+
+    private void AddProductToFinalList(string product)
+    {
+        toCreate.SuppliedProducts.Add(product);
+    }
+
+    private void AddProduct()
+    {
+        if (!string.IsNullOrEmpty(newProduct))
+        {
+            Products.Add(newProduct);
+            newProduct = "";
+        }
+    }
+
+    private void ShowSupplier()
+    {
+        Console.WriteLine("Company Name: " + toCreate.SupplierName);
+        Console.WriteLine("Country: " + toCreate.Country);
+        Console.WriteLine("Headcount: " + toCreate.HeadCount);
+        Console.WriteLine("Selected User: " + toCreate.RepresentativeId);
+        Console.WriteLine("Final Products List: " + string.Join(", ", toCreate.SuppliedProducts));
+    }
+
+    protected override async void OnInitialized()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        Users = await _userHttpClient.GetUsersAsync();
+        toCreate.SuppliedProducts ??= new List<string>();
+    }
+
+}
