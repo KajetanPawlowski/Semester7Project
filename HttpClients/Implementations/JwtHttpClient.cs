@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Domain.DTO;
+using Domain.Model;
 using HttpClients.Interfaces;
 
 namespace HttpClients.Implementations;
@@ -54,13 +55,8 @@ public class JwtHttpClient : IAuthHttpClient
         return Task.CompletedTask;
     }
 
-    public async Task RegisterAsync(string userMail, string password)
+    public async Task<User> RegisterAsync(RegisterUserDTO dto)
     {
-        UserLoginDTO dto = new()
-        {
-            UserMail = userMail,
-            Password = password
-        };
         string dtoAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
         
@@ -71,6 +67,11 @@ public class JwtHttpClient : IAuthHttpClient
         {
             throw new Exception(responseContent);
         }
+        User created = JsonSerializer.Deserialize<User>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return created;
     }
 
     public Task<ClaimsPrincipal> GetAuthAsync()

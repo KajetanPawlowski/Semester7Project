@@ -35,12 +35,12 @@ public class UserController: ControllerBase
     }
     //Post user
     [HttpPost,  AllowAnonymous]
-    public async Task<ActionResult<User>> CreateAsync(UserLoginDTO dto)
+    public async Task<ActionResult<User>> CreateAsync(RegisterUserDTO dto)
     {
         try
         {
             User user = await _userLogic.RegisterUserAsync(dto);
-            return Created($"/Supplier/{user.Id}", user);
+            return Created($"/User/{user.Id}", user);
         }
         catch (Exception e)
         {

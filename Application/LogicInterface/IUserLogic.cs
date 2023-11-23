@@ -6,7 +6,7 @@ namespace Application.LogicInterface;
 
 public interface IUserLogic
 {
-    Task<User> RegisterUserAsync(UserLoginDTO dto);
+    Task<User> RegisterUserAsync(RegisterUserDTO dto);
     Task<User> ValidateUserAsync(UserLoginDTO dto);
     Task<User?> GetByIdAsync(int userId);
     Task<User?> GetByUserMailAsync(string userMail);
