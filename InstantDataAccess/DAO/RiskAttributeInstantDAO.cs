@@ -13,21 +13,46 @@ public class RiskAttributeInstantDAO : IRiskAttributeDAO
     }
     public Task<RiskAttribute> CreateAsync(RiskAttribute riskAttribute)
     {
-        throw new NotImplementedException();
+        int riskAttributeId = 1;
+        if (context.RiskAttributes.Any())
+        {
+            riskAttributeId = context.RiskAttributes.Max(r => r.AttributeId);
+            riskAttributeId++;
+        }
+
+        riskAttribute.AttributeId = riskAttributeId;
+        context.RiskAttributes.Add(riskAttribute);
+        context.SaveChanges();
+
+        return Task.FromResult(riskAttribute);
     }
 
-    public Task<RiskAttribute> GetByIdAsync(int attributeId)
+    public async Task<RiskAttribute> GetByIdAsync(int attributeId)
     {
-        throw new NotImplementedException();
+        RiskAttribute? existing = context.RiskAttributes.FirstOrDefault(r =>
+            r.AttributeId == attributeId);
+        if(existing == null)
+        {
+            throw new Exception("Risk attribute not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<List<RiskAttribute>> GetByTypeAsync(string type)
     {
-        throw new NotImplementedException();
+        List<RiskAttribute> riskAttributes = context.RiskAttributes
+            .Where(r => r.AttributeType.Equals(type))
+            .ToList();
+
+        return Task.FromResult(riskAttributes);
     }
 
     public Task<List<string>> GetAttributeTypesAsync()
     {
-        throw new NotImplementedException();
+        List<string> attributeTypes = context.RiskAttributes
+            .Select(r => r.AttributeType).Distinct().ToList();
+
+        return Task.FromResult(attributeTypes);
     }
 }

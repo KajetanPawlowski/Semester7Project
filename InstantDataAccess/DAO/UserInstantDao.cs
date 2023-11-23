@@ -29,9 +29,16 @@ public class UserInstantDao : IUserDAO
         return Task.FromResult(user);
     }
 
-    public Task<User> GetByIdAsync(int userId)
+    public async Task<User> GetByIdAsync(int userId)
     {
-        throw new NotImplementedException();
+        User? existing = context.Users.FirstOrDefault(u =>
+            u.Id == userId);
+        if(existing == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<User> GetByMailAsync(string mail)
