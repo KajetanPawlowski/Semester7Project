@@ -8,7 +8,7 @@
 
 <PageTitle>Supplier Profile</PageTitle>
 <h3>Surveys</h3>
-@if (surveys == null)
+@if (_surveys == null)
 {
     <p>Load survey's data...</p>
 }
@@ -24,13 +24,13 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in surveys)
+        @foreach (var item in _surveys)
         {
             <tr>
                 <td>@item.Name</td>
                 <td>@item.CreationTime</td>
                 <td>@item.AnsweredTime</td>
-                <td><button class="feed-buttons answerSurveyBtn" onclick="@AnswerSurvey()"></button></td>
+                <td><button class="feed-buttons answerSurveyBtn" @onclick="AnswerSurvey"></button></td>
             </tr>
         }
         </tbody>
@@ -39,7 +39,7 @@ else
 
 
 @code {
-    private List<Survey> surveys = null;
+    private List<Survey> _surveys = null;
     private string msg = "";
 
     private int supplierId;
@@ -47,7 +47,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         supplierId = 1;
-        
         await LoadSurveys();
     }
 
@@ -55,7 +54,7 @@ else
     {
         try
         {
-            //surveys = await SupplierHttpClient.GetSurveys(supplierId);
+            _surveys = await SupplierHttpClient.GetSurveys(supplierId);
 
         }
         catch (Exception e)
@@ -70,9 +69,6 @@ else
         navMgr.NavigateTo("/AnswerSurvey");
     }
 
-    private async Task LoadSurveyName()
-    {
-        
-    }
+    
 
 }
