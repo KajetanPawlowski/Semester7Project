@@ -41,8 +41,12 @@ public class RiskInstantDAO : IRiskDAO
 
     public Task<Risk> GetByRiskNameAsync(string riskNameContent)
     {
-        Risk risk = context.Risks.FirstOrDefault(r => r.Name.Equals(riskNameContent));
-        return Task.FromResult(risk);
+        Risk? existing = context.Risks.FirstOrDefault(r => r.Name.Equals(riskNameContent));
+        if (existing == null)
+        {
+            throw new Exception("Risk not found");
+        }
+        return Task.FromResult(existing);
         
     }
 
