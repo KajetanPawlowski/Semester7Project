@@ -1,0 +1,111 @@
+@page "/AssessSupplier/{SupplierId}"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISupplierHttpClient _supplierHttpClient
+<h3>Assess Suppliers</h3>
+<div class="card-container">
+    @if (supplier == null)
+    {
+        <p> Loading... </p>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-title">
+                <h6>Supplier Products: @string.Join(", ", supplier.SuppliedProducts)</h6>
+            </div>
+            <div class="card-body">
+                @foreach (string product in supplier.SuppliedProducts)
+                {
+                    <div class="card">
+                        <div class="card-title">
+                            <h6>Product: @product</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Add a new Category" />
+                                <button class="btn btn-success">
+                                    Add
+                                </button>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Risk Category</th>
+                                    <th>Select Relevant</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (RiskCategory category in _categories)
+                                {
+                                    <tr>
+                                        <td>@category.CategoryName</td>
+                                        <td>
+                                            @if (supplier.Categories.FirstOrDefault(c => c.Equals(category)) == null)
+                                            {
+                                                <button @onclick="() => SelectCategory(category)">
+                                                    Select
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button>
+                                                    Unselect
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card-footer">
+                            <button >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Cascading parameter
+    [Parameter]
+    public string SupplierId { get; set; }
+
+    Supplier? supplier;
+    List<RiskCategory> _categories;
+    private bool isDropdownActive = false;
+    private string selectedCategory;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = new List<RiskCategory>();
+        RiskCategory cat = new RiskCategory();
+        cat.CategoryId = 1;
+        cat.CategoryName = "test";
+        _categories.Add(cat);
+        await LoadSupplier();
+    }
+
+    private async Task LoadSupplier()
+    {
+        int SupplierIdInt = int.Parse(SupplierId);
+        supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+        StateHasChanged(); // Ensure that the component is re-rendered after the data is loaded
+    }
+
+    void SelectCategory(RiskCategory category)
+    {
+        if (supplier.Categories.FirstOrDefault(c => c.CategoryId == category.CategoryId) == null)
+        {
+            supplier.Categories.Add(category);
+        }
+        StateHasChanged();
+    }
+    
+}

@@ -10,7 +10,7 @@ public interface ISupplierHttpClient
     //Using Survey Logic
     
     //Using Supplier Logic
-    public Task<Supplier> GetSupplierByEmail(string email);
+    public Task<Supplier> GetSupplierById(int supplierId);
     public Task<List<Survey>> GetSurveys(int supplierId);
     public Task<Supplier> CreateSupplier(SupplierCreationDTO dto);
     public Task<List<Supplier>> GetSuppliers();

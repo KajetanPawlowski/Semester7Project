@@ -26,6 +26,7 @@ else
             <th>Company Name</th>
             <th>Country</th>
             <th>Representative Mail</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +36,11 @@ else
                 <td>@item.CompanyName</td>
                 <td>@item.Country</td>
                 <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
+                <td>
+                    <button @onclick="() => AssessSupplier(item.Id)">
+                        Assess Supplier
+                        </button>
+                </td>
             </tr>
         }
         </tbody>
@@ -67,6 +73,10 @@ else
         }
     }
 
+    private void AssessSupplier(int supplierId )
+    {
+        navMgr.NavigateTo($"/AssessSupplier/{supplierId}");
+    }
     private async Task AddSupplier()
     {
         navMgr.NavigateTo("/AddSupplier");

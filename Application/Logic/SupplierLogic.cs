@@ -46,13 +46,19 @@ public class SupplierLogic : ISupplierLogic
         return _supplierDao.GetByIdAsync(_userDao.GetByMailAsync(supplierMail).Id);
     }
 
+    public Task<Supplier> GetSupplierById(int supplierId)
+    {
+        return _supplierDao.GetByIdAsync(supplierId);
+    }
+
     public Task<List<Survey>> GetSurveysAsync(int supplierId)
     {
         return _surveyDao.GetSupplierSurveysAsync(supplierId);
     }
 
-    public Task<Supplier> CreateSupplierAsync(SupplierCreationDTO dto)
+    public async Task<Supplier> CreateSupplierAsync(SupplierCreationDTO dto)
     {
+        await ValidateSupplierCreationDTO(dto);
         Supplier toCreate = new()
         {
             CompanyName = dto.SupplierName,
@@ -63,14 +69,26 @@ public class SupplierLogic : ISupplierLogic
             
             Categories = new List<RiskCategory>(),
             RelevantRisks = new List<Risk>()
-        //add more stuff here and to DTO
+        
         };
-        return _supplierDao.CreateAsync(toCreate);
+        return await _supplierDao.CreateAsync(toCreate);
     }
 
     public Task<List<Supplier>> GetSuppliersAsync()
     {
         return _supplierDao.GetAllAsync();
+    }
+
+    private async Task ValidateSupplierCreationDTO(SupplierCreationDTO dto)
+    {
+        try
+        {
+            await _userDao.GetByIdAsync(dto.RepresentativeId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Representative not found");
+        }
     }
     
     

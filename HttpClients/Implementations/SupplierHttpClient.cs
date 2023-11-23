@@ -16,9 +16,20 @@ public class SupplierHttpClient : ISupplierHttpClient
         this.client = client;
         this.authHttpClient = authHttpClient;
     }
-    public Task<Supplier> GetSupplierByEmail(string email)
+    public async Task<Supplier> GetSupplierById(int supplierId)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await client.GetAsync("/Supplier?supplierId="+supplierId);
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Supplier> suppliers = JsonSerializer.Deserialize<List<Supplier>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return suppliers.First();
     }
 
     public Task<List<Survey>> GetSurveys(int supplierId)

@@ -18,13 +18,22 @@ public class SupplierController : ControllerBase
     {
         _supplierLogic = supplierLogic;
     }
-    //Get Suppliers
+    
+    //Get Suppliers by Id
     [HttpGet,  AllowAnonymous]
-    public async Task<ActionResult<List<Supplier>>> GetSuppliersAsync()
+    public async Task<ActionResult<List<Supplier>>> GetSupplierByIdAsync([FromQuery] int? supplierId)
     {
         try
         {
-            List<Supplier> suppliers = await _supplierLogic.GetSuppliersAsync();
+            List<Supplier> suppliers = new List<Supplier>();
+            if (supplierId == null)
+            {
+                suppliers = await _supplierLogic.GetSuppliersAsync();
+            }
+            else
+            {
+                suppliers.Add(await _supplierLogic.GetSupplierById((int)supplierId));
+            }
             return Ok(suppliers);
         }
         catch (Exception e)
