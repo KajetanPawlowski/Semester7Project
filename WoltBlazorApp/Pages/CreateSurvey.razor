@@ -1,0 +1,64 @@
+﻿@page "/CreateSurvey"
+
+@using Domain.DTO
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISurveyHttpClient _surveyHttpClient
+@inject NavigationManager navMgr
+
+
+<h1>Create Survey</h1>
+<div class="card-container">
+    @if (addingNew)
+    {
+        <CreateQuestionCard CreateQuestionCallback="AddQuestionToSurvey" />
+    }
+    else
+    {
+        <div class="card">
+            <button @onclick="AddQuestion">Add Question</button>
+        </div>
+    }
+    @foreach (var item in newSurvey.Questions)
+    {
+        <QuestionCard question="@item"/>
+    }
+    <div class="card">
+        <button @onclick="SaveSurvey">Save Survey</button>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    private List<Question> questions { get; set; }
+    private CreateSurveyDTO newSurvey;
+
+    bool addingNew = false;
+
+    protected override void OnInitialized()
+    {
+        newSurvey = new CreateSurveyDTO();
+        newSurvey.Questions = new List<CreateQuestionDTO>();
+    }
+
+    private void AddQuestion()
+    {
+        addingNew = true;
+    }
+    private void AddQuestionToSurvey(CreateQuestionDTO newQuestion)
+    {
+        newSurvey.Questions.Add(newQuestion);
+        addingNew = false;
+        StateHasChanged();
+        
+    }
+
+    private async Task SaveSurvey()
+    {
+        
+    }
+
+}

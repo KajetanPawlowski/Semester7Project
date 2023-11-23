@@ -1,0 +1,28 @@
+﻿@using Domain.Model
+@using Domain.DTO
+
+<div class="card">
+    <div class="card-body" >
+        <table class="table">
+            <thead>
+            <tr>
+                <th><h6>@question.Body</h6></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in question.AllAnswers)
+            {
+                <tr>
+                    <td>@item</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CreateQuestionDTO question{ get; set; } 
+    
+}
