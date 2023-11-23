@@ -13,16 +13,34 @@ public class RiskCategoryInstantDAO : IRiskCategoryDAO
     }
     public Task<RiskCategory> CreateAsync(RiskCategory category)
     {
-        throw new NotImplementedException();
+        int categoryId = 1;
+        if (context.RiskCategories.Any())
+        {
+            categoryId = context.RiskCategories.Max(c => c.CategoryId);
+            categoryId++;
+        }
+
+        category.CategoryId = categoryId;
+        context.RiskCategories.Add(category);
+        context.SaveChanges();
+
+        return Task.FromResult(category);
     }
 
-    public Task<RiskCategory> GetByIdAsync(int categoryId)
+    public async Task<RiskCategory> GetByIdAsync(int categoryId)
     {
-        throw new NotImplementedException();
+        RiskCategory? existing = context.RiskCategories.FirstOrDefault(c =>
+            c.CategoryId == categoryId);
+        if(existing == null)
+        {
+            throw new Exception("Risk category not found");
+        }
+
+        return await Task.FromResult(existing);
     }
 
     public Task<List<RiskCategory>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(context.RiskCategories.ToList());
     }
 }
