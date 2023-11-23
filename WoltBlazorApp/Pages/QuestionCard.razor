@@ -1,0 +1,38 @@
+﻿@using Domain.Model
+<h3>QuestionCard</h3>
+
+<div class="card">
+    <div class="card-title">
+        <h6>@question.Body</h6> 
+    </div>
+    <div class="card-body">
+       @foreach (var answer in question.AllAnswers)
+       {
+           <label>
+               <input type="radio" name="@question.Body" value="@answer" @onchange="ChoiceSelected"/>
+               @answer
+           </label>
+                                                                                               
+       }
+    </div>
+</div>
+
+@code {
+    private Question question = new Question();
+    
+
+    protected override void OnInitialized()
+    {
+        
+        question.Body = "How are you?";
+        question.AllAnswers = new List<string> { "Very Satisfied", "Satisfied", "Neutral", "Unsatisfied", "Very Unsatisfied" };
+    }
+    [Parameter]
+    public EventCallback<string> OnChoiceSelected { get; set; }
+
+    private async Task ChoiceSelected(ChangeEventArgs e)
+    {
+        await OnChoiceSelected.InvokeAsync(e.Value.ToString());
+    }
+
+}

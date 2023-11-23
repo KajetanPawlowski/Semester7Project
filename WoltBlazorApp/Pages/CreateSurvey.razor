@@ -1,0 +1,38 @@
+﻿@page "/CreateSurvey"
+@using Application.LogicInterface
+@using Domain.DTO
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISurveyHttpClient _surveyHttpClient
+@inject NavigationManager navMgr
+//On intialieze load questions from asses supplier + load supplier info + cascading parameter user
+
+<h3>CreateSurvey</h3>
+
+<div>
+    @foreach (var question in Questions)
+    {
+        <QuestionCard Question="question" OnChoiceSelected="HandleChoiceSelected" />
+    }
+</div>
+
+<button @onclick="SaveSurvey">Save Survey</button>
+
+
+@code {
+    private List<Question> Questions { get; set; } = new List<Question>();
+    private CreateSurveyDTO newSurvey;
+    
+    private void HandleChoiceSelected(string selectedChoice)
+    {
+    // Handle the selected choice for the current question
+        Console.WriteLine($"Selected choice: {selectedChoice}");
+    }
+
+    private async Task SaveSurvey()
+    {
+        Survey survey = await _surveyHttpClient.CreateSurveyAsync(newSurvey);
+        navMgr.NavigateTo("/");
+    }
+
+}
