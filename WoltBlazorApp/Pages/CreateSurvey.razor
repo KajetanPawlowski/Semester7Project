@@ -7,25 +7,42 @@
 @inject NavigationManager navMgr
 
 
-<h3>CreateSurvey</h3>
+<h1>CreateSurvey</h1>
 
-<div>
-
-        <QuestionCard />
-    
+<div class="card">
+    <div class="card-title">
+        <button class="btn btn-success" @onclick="@AddQuestion"> Add Question </button>
+        <QuestionCard> </QuestionCard>
+    </div>
 </div>
+
+
 
 <button @onclick="SaveSurvey">Save Survey</button>
 
 
 @code {
-    private List<Question> Questions { get; set; } = new List<Question>();
+    private List<Question> questions { get; set; } = new List<Question>();
     private CreateSurveyDTO newSurvey;
+
+    private Question newQuestion = null;
     
     private void HandleChoiceSelected(string selectedChoice)
     {
     // Handle the selected choice for the current question
         Console.WriteLine($"Selected choice: {selectedChoice}");
+    }
+
+    private void AddQuestionToFinalList(Question question)
+    {
+        newSurvey.Questions.Add(question);
+    }
+
+    private void AddQuestion()
+    {
+        questions.Add(newQuestion);
+        AddQuestionToFinalList(newQuestion);
+        newQuestion = null;
     }
 
     private async Task SaveSurvey()
