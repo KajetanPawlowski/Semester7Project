@@ -19,7 +19,8 @@
 
 @code {
     private Question question = new Question();
-    
+    [Parameter]
+    public EventCallback<string> OnChoiceSelected { get; set; } 
 
     protected override void OnInitialized()
     {
@@ -27,8 +28,7 @@
         question.Body = "How are you?";
         question.AllAnswers = new List<string> { "Very Satisfied", "Satisfied", "Neutral", "Unsatisfied", "Very Unsatisfied" };
     }
-    [Parameter]
-    public EventCallback<string> OnChoiceSelected { get; set; }
+
 
     private async Task ChoiceSelected(ChangeEventArgs e)
     {

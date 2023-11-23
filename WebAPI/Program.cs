@@ -32,6 +32,7 @@ builder.Services.AddScoped<ISurveyDAO, SurveyInstantDAO>();
 
 //Add Logic
 builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
+builder.Services.AddScoped<ISurveyLogic, SurveyLogic>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
 
 
