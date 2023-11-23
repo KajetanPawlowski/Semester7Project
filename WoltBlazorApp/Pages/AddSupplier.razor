@@ -2,8 +2,10 @@
 @using Domain.Model
 @using Domain.DTO
 @using HttpClients.Interfaces
-@using Microsoft.AspNetCore.Http.HttpResults
 @inject IUserHttpClient _userHttpClient
+@inject IAuthHttpClient _authHttpClient
+@inject ISupplierHttpClient _supplierHttpClient
+@inject NavigationManager navMgr
 <h3>Add Supplier</h3>
 
 <div class="card-container">
@@ -27,7 +29,7 @@
     {
         <div class="card">
             <div class="card-title">
-                <h6>Rep Id:</h6>
+                <h6>Representative:</h6>
             </div>
             <div class="card-body" style="@StyleDisplay[1]">
                 <table class="table">
@@ -65,14 +67,15 @@
     {
         <div class="card">
             <div class="card-title">
-                <h6>Add User:</h6>
+                <h6>New Representative:</h6>
             </div>
             <div class="card-body" style="@StyleDisplay[1]">
-                <input type="text" placeholder="User" @bind="selectedUser.FullName" />
+                <input type="text" placeholder="Representative name" @bind="newUser.FullName" />
+                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail" />
                 <!-- Add other input fields for user details -->
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="() => ShowNext(1)">
+                <button @onclick="SaveNewUser">
                     Save User
                 </button>
             </div>
@@ -122,7 +125,7 @@
             </div>
         </div>
         <div class="card-footer" style="@StyleDisplay[2]">
-            <button @onclick="ShowSupplier">
+            <button @onclick="SaveSupplier">
                 Save
             </button>
         </div>
@@ -134,13 +137,9 @@
     private string[] StyleDisplay = new string[] { "display : block", "display : none", "display : none" };
 
     private SupplierCreationDTO toCreate = new SupplierCreationDTO();
-    private List<User> Users = new List<User>
-    {
-        new User { Id = 1, FullName = "Maja" },
-        new User { Id = 2, FullName = "Kajetan" },
-        new User { Id = 3, FullName = "Alice" }
-    };
+    private List<User> Users = new List<User>();
     private bool UserExist = true;
+    private RegisterUserDTO newUser; 
     private User selectedUser = new User();
 
     private List<string> Products = new List<string> { "Fish", "Meat", "Vegetables" };
@@ -155,6 +154,14 @@
     private void ShowAddUser()
     {
         UserExist = false;
+        newUser = new RegisterUserDTO();
+    }
+
+    private async Task SaveNewUser()
+    {
+        User created = await _authHttpClient.RegisterAsync(newUser);
+        toCreate.RepresentativeId= created.Id;
+        ShowNext(1);
     }
 
     private void SelectUser(User user)
@@ -174,17 +181,21 @@
         if (!string.IsNullOrEmpty(newProduct))
         {
             Products.Add(newProduct);
+            AddProductToFinalList(newProduct);
             newProduct = "";
         }
     }
 
-    private void ShowSupplier()
+    private async Task SaveSupplier()
     {
         Console.WriteLine("Company Name: " + toCreate.SupplierName);
         Console.WriteLine("Country: " + toCreate.Country);
         Console.WriteLine("Headcount: " + toCreate.HeadCount);
         Console.WriteLine("Selected User: " + toCreate.RepresentativeId);
         Console.WriteLine("Final Products List: " + string.Join(", ", toCreate.SuppliedProducts));
+
+        await _supplierHttpClient.CreateSupplier(toCreate);
+        navMgr.NavigateTo("/");
     }
 
     protected override async void OnInitialized()

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Domain.DTO;
 using Domain.Model;
@@ -25,9 +26,23 @@ public class SupplierHttpClient : ISupplierHttpClient
         throw new NotImplementedException();
     }
 
-    public Task<Supplier> CreateSupplier(SupplierCreationDTO dto)
+    public async Task<Supplier> CreateSupplier(SupplierCreationDTO dto)
     {
-        throw new NotImplementedException();
+        string dtoAsJson = JsonSerializer.Serialize(dto);
+        StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await client.PostAsync("/Supplier", content);
+        string responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(responseContent);
+        }
+        Supplier created = JsonSerializer.Deserialize<Supplier>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return created;
     }
 
     public async Task<List<Supplier>> GetSuppliers()

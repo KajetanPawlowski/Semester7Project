@@ -8,11 +8,12 @@ namespace Application.Logic;
 public class UserLogic : IUserLogic
 {
     private readonly IUserDAO _userDao;
+    private const string DEFAULT_PASSWORD = "pass";
     public UserLogic(IUserDAO userDao)
     {
         _userDao = userDao;
     }
-    public async Task<User> RegisterUserAsync(UserLoginDTO dto)
+    public async Task<User> RegisterUserAsync(RegisterUserDTO dto)
     {
         User? existing = await _userDao.GetByMailAsync(dto.UserMail);
         if (existing != null)
@@ -22,7 +23,8 @@ public class UserLogic : IUserLogic
         User toCreate = new User 
         {
             Mail = dto.UserMail,
-            Password = dto.Password,
+            Password = DEFAULT_PASSWORD,
+            FullName = dto.FullName,
             Role = "woltSupplier"
             
         };
@@ -64,18 +66,12 @@ public class UserLogic : IUserLogic
         return _userDao.GetAllAsync();
     }
 
-    private static void ValidateRegistrationData(UserLoginDTO userToCreate)
+    private static void ValidateRegistrationData(RegisterUserDTO userToCreate)
     {
         string userMail = userToCreate.UserMail;
-        string password = userToCreate.Password;
 
         if (userMail.Length < 3)
             throw new Exception("User mail must be at least 3 characters!");
         
-        if (password.Length < 3)
-            throw new Exception("Password must be at least 3 characters!");
-
-        if (password.Length > 15)
-            throw new Exception("Password must be less than 16 characters!");
     }
 }
