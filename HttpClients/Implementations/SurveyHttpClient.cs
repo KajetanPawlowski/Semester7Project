@@ -17,9 +17,20 @@ public class SurveyHttpClient : ISurveyHttpClient
         this.authHttpClient = authHttpClient;
     }
     
-    public Task<List<RiskCategory>> GetCategoriesAsync()
+    public async Task<List<RiskCategory>> GetCategoriesAsync()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await client.GetAsync("/Risk/Category");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<RiskCategory> categories = JsonSerializer.Deserialize<List<RiskCategory>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return categories;
     }
 
     public Task<List<Risk>> GetGenericRisksAsync(int categoryId)

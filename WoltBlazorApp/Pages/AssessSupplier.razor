@@ -2,6 +2,7 @@
 @using Domain.Model
 @using HttpClients.Interfaces
 @inject ISupplierHttpClient _supplierHttpClient
+@inject ISurveyHttpClient _surveyHttpClient
 <h3>Assess Suppliers</h3>
 <div class="card-container">
     @if (supplier == null)
@@ -84,11 +85,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = new List<RiskCategory>();
-        RiskCategory cat = new RiskCategory();
-        cat.CategoryId = 1;
-        cat.CategoryName = "test";
-        _categories.Add(cat);
         await LoadSupplier();
     }
 
@@ -96,6 +92,7 @@
     {
         int SupplierIdInt = int.Parse(SupplierId);
         supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+        _categories = await _surveyHttpClient.GetCategoriesAsync();
         StateHasChanged(); // Ensure that the component is re-rendered after the data is loaded
     }
 

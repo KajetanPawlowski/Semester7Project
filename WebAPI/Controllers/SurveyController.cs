@@ -44,7 +44,7 @@ public class SurveyController : ControllerBase
         try
         {
             Survey survey = await _surveyLogic.CreateSurvey(dto);
-            return Created($"/Surevy/{survey.Id}", survey);
+            return Created($"/Survey/{survey.Id}", survey);
 
         }
         catch (Exception e)

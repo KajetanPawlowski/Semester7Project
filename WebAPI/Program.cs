@@ -34,7 +34,7 @@ builder.Services.AddScoped<ISurveyDAO, SurveyInstantDAO>();
 builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
 builder.Services.AddScoped<ISurveyLogic, SurveyLogic>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
-
+builder.Services.AddScoped<IRiskLogic, RiskLogic>();
 
 AuthorizationPolicies.AddPolicies(builder.Services);
 //Authorisation Stuff
