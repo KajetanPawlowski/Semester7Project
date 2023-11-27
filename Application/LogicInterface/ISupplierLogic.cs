@@ -6,7 +6,7 @@ namespace Application.LogicInterface;
 public interface ISupplierLogic
 {
     Task<Supplier> AssignNewRiskCategory(int supplierId, int categoryId);
-    Task<List<Risk>> AssignSpecificRisk(int supplierId, Risk specificRisk);
+    Task<Supplier> AssignSpecificRisk(int supplierId, Risk specificRisk);
     Task<Supplier> GetSupplierByMail(string supplierMail);
     Task<Supplier> GetSupplierById(int supplierId);
     Task<List<Survey>> GetSurveysAsync(int supplierId);
