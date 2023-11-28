@@ -1,3 +1,4 @@
+using System.Numerics;
 using Application.DAOInterface;
 using Application.LogicInterface;
 using Domain.DTO;
@@ -52,7 +53,22 @@ public class SurveyLogic : ISurveyLogic
     {
         //make sure all the questions already added!!!
         await ValidateSurveyCreationDTO(dto);
-        throw new NotImplementedException();
+        List<Question> questions = new List<Question>();
+        foreach (var questionDto in dto.Questions)
+        {
+            questions.Add(await AddQuestion(questionDto)); 
+        }
+
+        Survey toCreate = new()
+        {
+            SupplierId = dto.SupplierId,
+            CreatorId = dto.CreatorId,
+            CreationTime = DateTime.Now,
+            Name = dto.Name,
+            Questions = questions
+        };
+
+        return await _surveyDao.CreateAsync(toCreate);
     }
     
     public async Task<Question> AddQuestion(CreateQuestionDTO dto)
@@ -93,6 +109,12 @@ public class SurveyLogic : ISurveyLogic
         catch (RiskCategoryNotFound categoryNotFound)
         {
             await _riskCategoryDao.CreateAsync(dto.RiskCategory);
+        }
+        
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

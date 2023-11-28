@@ -83,6 +83,8 @@ public class RiskLogic : IRiskLogic
         return await _riskDao.UpdateRisk(risk);
     }
 
-    
-    
+    public Task<List<Risk>> GetRisksAsync()
+    {
+        return _riskDao.GetAllAsync();
+    }
 }

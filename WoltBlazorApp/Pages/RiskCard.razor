@@ -14,9 +14,9 @@ else
             }
             else
             {
-            <button @onclick="QualifyRiskNotify"> Qualify Risk </button>
+                <button @onclick="RemoveRisk"> Remove Risk </button>
+                <button @onclick="QualifyRiskNotify"> Qualify Risk </button>
             }
-        
         </div>
     </div>
 }
@@ -25,7 +25,15 @@ else
     public Risk? Display { get; set; } 
     [Parameter]
     public Action QualifyRiskNotify { get; set; }
+    [Parameter] 
+    public EventCallback<Risk> RemoveRiskNotify { get; set; }
+
+    void RemoveRisk()
+    {
+        RemoveRiskNotify.InvokeAsync(Display);
+    }
     
 
-   
+
+
 }
