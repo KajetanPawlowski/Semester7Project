@@ -1,16 +1,77 @@
 @page "/AssessSupplier/{SupplierId}/Risks"
 @using Domain.Model
 @using HttpClients.Interfaces
-@inject ISupplierHttpClient _supplierHttpClient
-<h3>Assess Risks</h3>
-<div class="card-container">
+@using Domain.DTO
+@inject ISupplierHttpClient _supplierHttpClient;
+@inject ISurveyHttpClient _surveyHttpClient
+@inject NavigationManager navMgr
+
+
+<div class="container-fluid">
+    @if (supplier != null)
+    {
+        <h3>Assess Risks. Suppler: @supplier.CompanyName. Country: @supplier.Country. Size: @supplier.Headcount people.</h3>
+    }
     @if (supplier == null)
     {
-        <p> Loading... </p>
+        <p>Loading...</p>
+    }
+    else if(!hasCategories)
+    {
+        <p>Please add categories to the supplier products</p>
+        <button class="btn btn-secondary" @onclick="GoBack">Go back</button>
     }
     else
     {
-        <p> @supplier.CompanyName</p>
+        <div class="row">
+            <div class="col-md-3">
+                <AssessSupplierRiskSidebar Categories="supplier.Categories" Risks="risks" AddRiskNotify="AddRisk" SelectRiskNotify="SelectRisk"/>
+            </div>
+            @if (!isAddingNew)
+            {
+                @if (risks[selectedRiskIndex] == null)
+                {
+                    <p>Select Risk</p>
+                }
+            }
+            else
+            {
+             
+                <div class="col-md-9">
+                    <!-- Main Content -->
+                    @if (isAddingNew)
+                    {
+                        <AddRiskQuastionCard Category="@selectedCategory" SaveRiskNotify="SaveRisk"/>
+                    }
+                    else
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Category: @selectedCategory.CategoryName</h6>
+                                @if (!isQualifingRisk)
+                                {
+                                    <RiskCard Display="@risks[selectedRiskIndex]" QualifyRiskNotify="QualifyRisk"/>
+                                }
+                                else
+                                {
+                                    <QuaifyRiskCard Display="@risks[selectedRiskIndex]" Supplier="@supplier" UpdateSupplierNotify="async () => await UpdateSupplier()"/>
+                                }
+                            </div>
+                            <div class="card-footer">
+                                @if(CheckIfFinished())
+                                {
+                                    <button @onclick="NavigateToNextPage">
+                                        READY - Create Survey
+                                    </button>
+                                }
+                                
+                            </div>
+                        </div>
+                    }
+                </div>
+                   
+            }
+        </div>
     }
 </div>
 
@@ -20,19 +81,137 @@
     public string SupplierId { get; set; }
 
     Supplier? supplier;
-    List<RiskCategory> _SupplierCategories;
+
+    List<Risk> risks;
+    int selectedRiskIndex;
+    RiskCategory selectedCategory;
+
+    bool hasCategories = true;
+    bool isAddingNew = false;
+    bool isQualifingRisk = false;
 
 
     protected override async Task OnInitializedAsync()
     {
         await LoadSupplier();
+        if (supplier != null)
+        {
+            //await LoadGeneralRisks();
+            LoadRisk();
+        }
+        StateHasChanged();
     }
 
     private async Task LoadSupplier()
     {
         int SupplierIdInt = int.Parse(SupplierId);
         supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
-        StateHasChanged(); // Ensure that the component is re-rendered after the data is loaded
     }
 
+    private void LoadRisk()
+    {
+        try
+        {
+            risks = supplier.RelevantRisks;
+            selectedRiskIndex = risks.IndexOf(risks.First());
+            selectedCategory = risks[selectedRiskIndex].Category;
+            return;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("No Risk Assigned");
+        }
+        
+            
+        if (!supplier.Categories.Any() || supplier.Categories == null)
+        {
+            hasCategories = false;
+        }
+        else
+        {
+            risks = new List<Risk>();
+            selectedCategory = supplier.Categories.First();
+            isAddingNew = true;
+        }
+        
+        
+    }
+
+    private List<Risk> LoadGeneralRisk()
+    {
+        throw new NotImplementedException();
+    }
+    
+    //If of No Categories - go back
+    void GoBack()
+    {
+        navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Categories");
+    }
+
+    void NavigateToNextPage()
+    {
+        navMgr.NavigateTo("/");
+    }
+    //Check If assessment finished
+    bool CheckIfFinished()
+    {
+        if (risks != null || !risks.Any())
+        {
+            foreach (var risk in risks)
+            {
+                if (risk.RiskAttributes == null)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    //Sidebar functions
+    //Add Risk to the view
+    private void AddRisk(RiskCategory category)
+    {
+        isAddingNew = true;
+        selectedCategory = category;
+    }
+    
+    //Select Risk to the View
+    private void SelectRisk(Risk risk)
+    {
+        isAddingNew = false;
+        isQualifingRisk = false;
+        selectedRiskIndex= risks.IndexOf(risk);
+        selectedCategory = risks[selectedRiskIndex].Category;
+        StateHasChanged();
+    }
+    
+    //Add Risk Card functions
+    //Save risk - to the GENERAL RISK TABLE 
+    private async Task SaveRisk(CreateRiskDTO dto)
+    {
+        risks.Add(await _surveyHttpClient.AddRiskAsync(dto));
+        isAddingNew = false;
+        StateHasChanged();
+    }
+    
+    //Invoked in the risk display card Qualify  Risk (OPEN THE QUALIFY CARD PAGE)
+    private void QualifyRisk()
+    {
+        isQualifingRisk = true;
+        isAddingNew = false;
+        StateHasChanged();
+
+    }
+    //Update supplier Invoked in QualifyRisk Card
+    private async Task UpdateSupplier()
+    {
+        isQualifingRisk = false;
+        await LoadSupplier();
+        StateHasChanged();
+    }
+
+    
+    
 }
