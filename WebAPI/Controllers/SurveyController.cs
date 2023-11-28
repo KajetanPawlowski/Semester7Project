@@ -37,6 +37,24 @@ public class SurveyController : ControllerBase
         }
     }
     
+    //Get Questions
+    [HttpGet("Question")]
+    [AllowAnonymous]
+    public async Task<ActionResult<Question>> GetGenericQuestionsAsync([FromQuery]int supplierId)
+    {
+        try
+        {
+            List<Question> questions = await _surveyLogic.GenerateQuestions(supplierId);
+            return Ok(questions);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
     //Post Survey
     [HttpPost, AllowAnonymous]
     public async Task<ActionResult<Survey>> CreateAsync(CreateSurveyDTO dto)
