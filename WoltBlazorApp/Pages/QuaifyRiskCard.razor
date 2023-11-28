@@ -97,14 +97,13 @@ else
 
     async Task SaveRisk()
     {
-        Risk toUpdate = Supplier.RelevantRisks.FirstOrDefault(r => r.Id == Display.Id);
-        toUpdate.RiskAttributes = selectedAttributes;
+        Display.RiskAttributes = selectedAttributes;
         UpdateSupplierDTO dto = new()
         {
             SupplierId = Supplier.Id,
             Risks = new List<Risk>()
         };
-        dto.Risks.Add(toUpdate);
+        dto.Risks.Add(Display);
         try
         {
             await _supplierHttpClient.UpdateSupplierRisks(dto);
