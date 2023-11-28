@@ -1,4 +1,4 @@
-﻿@page "/CreateSurvey/{supplierId}"
+﻿@page "/CreateSurvey/{SupplierId}"
 
 @using Domain.DTO
 @using Domain.Model
@@ -7,68 +7,89 @@
 @inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
 
-@if (newSurvey == null)
-{
-    <p> Loading... </p>
-}
-else
-{
-    <h1>Create Survey</h1>
-    <div class="card-container">
-        @if (addingNew)
-        {
-            <CreateQuestionCard CreateQuestionCallback="AddQuestionToSurvey"/>
-        }
-        else
-        {
-            <div class="card">
-                <button @onclick="AddQuestion">Add Question</button>
-            </div>
-        }
-        @foreach (var item in newSurvey.Questions)
-        {
-            <QuestionCard question="@item"/>
-        }
-        <div class="card">
-            <button @onclick="SaveSurvey">Save Survey</button>
-        </div>
-    </div>
-}
 
+<div class="card-container">
+    @if (supplier != null)
+    {
+        <h2>Create Survey for @supplier.CompanyName</h2>
+    }
+    @if (supplier == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <CreateSurveySidebar Categories="supplier.Categories" Questions="questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
+            </div>
+            <div class="col-md-9">
+                @if (addingNew)
+                {
+                    <CreateQuestionCard CreateQuestionCallback="CreateQuestion"/>
+                }
+                else
+                {
+                    @foreach (var item in newSurvey.Questions)
+                    {
+                        <QuestionCard question="@item"/>
+                    }
+                    <div class="card">
+                        <button @onclick="SaveSurvey">Save Survey</button>
+                    </div>
+                } 
+            </div>
+           
+        </div> 
+    }
+</div >
 @code 
 {
     [Parameter]
-    public string supplierId { get; set; }
+    public string SupplierId { get; set; }
 
     private List<Question> questions { get; set; }
     private CreateSurveyDTO newSurvey;
+
+    int selectedQuestionIndex;
+    RiskCategory selectedQuestionCategory;
 
     Supplier? supplier;
 
     private string newName = "";
 
-    bool addingNew = false;
+    bool addingNew;
 
     protected override async Task OnInitializedAsync()
     {
+        addingNew = true;
+        await LoadSupplier();
         await LoadQuestions();
         newSurvey = new CreateSurveyDTO();
         newSurvey.Questions = new List<CreateQuestionDTO>();
+        
+    }
+
+    private async Task LoadSupplier()
+    {
+        int SupplierIdInt = int.Parse(SupplierId);
+        supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+       
     }
 
     private async Task LoadQuestions()
     {
-        int SupplierIdInt = int.Parse(supplierId);
-        questions = await _surveyHttpClient.GetQuestionsAsync(SupplierIdInt);
+        questions = await _surveyHttpClient.GetQuestionsAsync(supplier.Id);
         StateHasChanged();
     }
 
-    private void AddQuestion()
+    private void AddQuestion(RiskCategory category)
     {
         addingNew = true;
+        selectedQuestionCategory = category;
     }
 
-    private void AddQuestionToSurvey(CreateQuestionDTO newQuestion)
+    private void CreateQuestion(CreateQuestionDTO newQuestion)
     {
         newSurvey.Questions.Add(newQuestion);
         addingNew = false;
@@ -76,12 +97,20 @@ else
 
     }
 
+    private void SelectQuestion(Question question)
+    {
+        addingNew = false;
+        selectedQuestionIndex = questions.IndexOf(question);
+        selectedQuestionCategory = questions[selectedQuestionIndex].Category;
+        StateHasChanged();
+    }
+
     private async Task SaveSurvey()
     {
         try
         {
             await _surveyHttpClient.CreateSurveyAsync(newSurvey);
-            navMgr.NavigateTo($"/SupplierProfile/{supplierId}");
+            navMgr.NavigateTo($"/SupplierProfile/{SupplierId}");
 
         }
         catch (Exception e)
