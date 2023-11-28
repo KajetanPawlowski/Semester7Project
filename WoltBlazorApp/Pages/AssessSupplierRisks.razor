@@ -85,7 +85,7 @@
     {
         Console.WriteLine("Hello");
         await LoadSupplier();
-        //await LoadGeneralRisks();
+        await LoadRisk();
         
     }
 
@@ -93,20 +93,23 @@
     {
         int SupplierIdInt = int.Parse(SupplierId);
         supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
-        LoadRisk();
+        
     }
 
-    private void LoadRisk()
+    private async Task LoadRisk()
     {
         try
         {
             risks = supplier.RelevantRisks;
+            if (risks == null || !risks.Any())
+            {
+                risks = await LoadGeneralRisk(); 
+            }
             selectedRiskIndex = risks.IndexOf(risks.First());
             selectedCategory = risks[selectedRiskIndex].Category;
         }
         catch (Exception e)
         {
-            risks = new List<Risk>(); 
             if (!supplier.Categories.Any() || supplier.Categories == null)
             {
                 hasCategories = false;
@@ -117,16 +120,11 @@
             }
             isAddingNew = true;
         }
-        
-            
-       
-        
-        
     }
 
-    private List<Risk> LoadGeneralRisk()
+    private async Task<List<Risk>> LoadGeneralRisk()
     {
-        throw new NotImplementedException();
+        return await _surveyHttpClient.GetGenericRisksAsync();
     }
     
     //If of No Categories - go back

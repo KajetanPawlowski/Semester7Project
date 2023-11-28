@@ -80,5 +80,21 @@ public class RiskController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    //Get Risk Attributes
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<RiskAttribute>>> GetRisksAsync()
+    {
+        try
+        {
+            List<Risk> risks = await _riskLogic.GetRisksAsync();
+            return Ok(risks);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
     
 }

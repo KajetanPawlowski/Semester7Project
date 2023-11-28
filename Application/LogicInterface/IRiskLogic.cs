@@ -14,5 +14,6 @@ public interface IRiskLogic
     Task<List<RiskAttribute>> GetRiskAttributes();
     Task<List<RiskCategory>> GetRiskCategories();
     Task<Risk> QualifyRisk(Risk risk, List<RiskAttribute> attributes);
+    Task<List<Risk>> GetRisksAsync();
 
 }
