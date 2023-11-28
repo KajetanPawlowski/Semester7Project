@@ -1,0 +1,38 @@
+@page "/AssessSupplier/{SupplierId}/Risks"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISupplierHttpClient _supplierHttpClient
+<h3>Assess Risks</h3>
+<div class="card-container">
+    @if (supplier == null)
+    {
+        <p> Loading... </p>
+    }
+    else
+    {
+        <p> @supplier.CompanyName</p>
+    }
+</div>
+
+@code {
+    // Cascading parameter
+    [Parameter]
+    public string SupplierId { get; set; }
+
+    Supplier? supplier;
+    List<RiskCategory> _SupplierCategories;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSupplier();
+    }
+
+    private async Task LoadSupplier()
+    {
+        int SupplierIdInt = int.Parse(SupplierId);
+        supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+        StateHasChanged(); // Ensure that the component is re-rendered after the data is loaded
+    }
+
+}

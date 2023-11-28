@@ -56,6 +56,30 @@ public class SupplierHttpClient : ISupplierHttpClient
         return created;
     }
 
+    public async Task<Supplier> AddSupplierCategories(UpdateSupplierDTO dto)
+    {
+        string dtoAsJson = JsonSerializer.Serialize(dto);
+        StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await client.PatchAsync("/Supplier", content);
+        string responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(responseContent);
+        }
+        Supplier updated = JsonSerializer.Deserialize<Supplier>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return updated;
+    }
+
+    public Task<Supplier> UpdateSupplierRisks(UpdateSupplierDTO dto)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<List<Supplier>> GetSuppliers()
     {
         HttpResponseMessage response = await client.GetAsync("/Supplier");

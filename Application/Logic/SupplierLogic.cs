@@ -25,11 +25,15 @@ public class SupplierLogic : ISupplierLogic
     public async Task<Supplier> AssignNewRiskCategory(int supplierId, int categoryId)
     {
         Supplier toUpdate = await _supplierDao.GetByIdAsync(supplierId);
-        toUpdate.Categories.Add(await _riskCategoryDao.GetByIdAsync(categoryId));
+        RiskCategory category = await _riskCategoryDao.GetByIdAsync(categoryId);
+        if (!toUpdate.Categories.Contains(category))
+        {
+            toUpdate.Categories.Add(category);
+        }
         return await _supplierDao.UpdateAsync(toUpdate);
     }
 
-    public async Task<List<Risk>> AssignSpecificRisk(int supplierId, Risk specificRisk)
+    public async Task<Supplier> AssignSpecificRisk(int supplierId, Risk specificRisk)
     {
         Supplier toUpdate = await _supplierDao.GetByIdAsync(supplierId);
         if (specificRisk.Id == 0)
@@ -38,7 +42,7 @@ public class SupplierLogic : ISupplierLogic
         }
         toUpdate.RelevantRisks.Add(specificRisk);
         Supplier result = await _supplierDao.UpdateAsync(toUpdate);
-        return result.RelevantRisks;
+        return result;
     }
 
     public Task<Supplier> GetSupplierByMail(string supplierMail)
