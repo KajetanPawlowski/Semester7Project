@@ -10,4 +10,5 @@ public interface ISurveyLogic
     Task<Question> AddQuestion(CreateQuestionDTO dto);
     Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey);
     
+    
 }
