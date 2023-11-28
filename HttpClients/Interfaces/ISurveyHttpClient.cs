@@ -7,7 +7,7 @@ public interface ISurveyHttpClient
 {
     //Using Risk Logic
     Task<List<RiskCategory>> GetCategoriesAsync();
-    Task<List<Risk>> GetGenericRisksAsync(int categoryId);
+    Task<List<Risk>> GetGenericRisksAsync();
     Task<List<string>> GetRiskAttributesTypesAsync();
     Task<List<RiskAttribute>> GetRiskAttributesAsync();
     Task<Risk> AddRiskAsync(CreateRiskDTO dto);

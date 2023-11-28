@@ -28,37 +28,37 @@
                 <AssessSupplierRiskSidebar Categories="supplier.Categories" Risks="risks" AddRiskNotify="AddRisk" SelectRiskNotify="SelectRisk"/>
             </div>
             <div class="col-md-9">
-                    <!-- Main Content -->
-                    @if (isAddingNew)
-                    {
-                        <AddRiskQuastionCard Category="@selectedCategory" SaveRiskNotify="SaveRisk"/>
-                    }
-                    else
-                    {
-                        <div class="card">
-                            <div class="card-body">
-                                <h6>Category: @selectedCategory.CategoryName</h6>
-                                @if (!isQualifingRisk)
-                                {
-                                    <RiskCard Display="@risks[selectedRiskIndex]" QualifyRiskNotify="QualifyRisk"/>
-                                }
-                                else
-                                {
-                                    <QuaifyRiskCard Display="@risks[selectedRiskIndex]" Supplier="@supplier" UpdateSupplierNotify="async () => await UpdateSupplier()"/>
-                                }
-                            </div>
-                            <div class="card-footer">
-                                @if(CheckIfFinished())
-                                {
-                                    <button @onclick="NavigateToNextPage">
-                                        READY - Create Survey
-                                    </button>
-                                }
-                                
-                            </div>
+                <!-- Main Content -->
+                @if (isAddingNew)
+                {
+                    <AddRiskQuastionCard Category="@selectedCategory" SaveRiskNotify="SaveRisk"/>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <h6>Category: @selectedCategory.CategoryName</h6>
+                            @if (!isQualifingRisk)
+                            {
+                                <RiskCard Display="@risks[selectedRiskIndex]" QualifyRiskNotify="QualifyRisk" RemoveRiskNotify="RemoveRisk"/>
+                            }
+                            else
+                            {
+                                <QuaifyRiskCard Display="@risks[selectedRiskIndex]" Supplier="@supplier" UpdateSupplierNotify="async () => await UpdateSupplier()"/>
+                            }
                         </div>
-                    }
-                </div>
+                        <div class="card-footer">
+                            @if(CheckIfFinished())
+                            {
+                                <button @onclick="NavigateToNextPage">
+                                    READY - Create Survey
+                                </button>
+                            }
+                                
+                        </div>
+                    </div>
+                }
+            </div>
             
         </div>
     }
@@ -78,14 +78,13 @@
     bool hasCategories = true;
     bool isAddingNew = false;
     bool isQualifingRisk = false;
-    bool firstLoad;
 
 
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("Hello");
         await LoadSupplier();
-        //await LoadGeneralRisks();
+        await LoadRisk();
         
     }
 
@@ -93,20 +92,23 @@
     {
         int SupplierIdInt = int.Parse(SupplierId);
         supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
-        LoadRisk();
+        
     }
 
-    private void LoadRisk()
+    private async Task LoadRisk()
     {
         try
         {
             risks = supplier.RelevantRisks;
+            if (risks == null || !risks.Any())
+            {
+                risks = await LoadGeneralRisk(); 
+            }
             selectedRiskIndex = risks.IndexOf(risks.First());
             selectedCategory = risks[selectedRiskIndex].Category;
         }
         catch (Exception e)
         {
-            risks = new List<Risk>(); 
             if (!supplier.Categories.Any() || supplier.Categories == null)
             {
                 hasCategories = false;
@@ -117,16 +119,11 @@
             }
             isAddingNew = true;
         }
-        
-            
-       
-        
-        
     }
 
-    private List<Risk> LoadGeneralRisk()
+    private async Task<List<Risk>> LoadGeneralRisk()
     {
-        throw new NotImplementedException();
+        return await _surveyHttpClient.GetGenericRisksAsync();
     }
     
     //If of No Categories - go back
@@ -190,8 +187,34 @@
         isQualifingRisk = true;
         isAddingNew = false;
         StateHasChanged();
-
     }
+    //Invoked from risk display - REMOVE ONLY from the view
+    private void RemoveRisk(Risk risk)
+    {
+        if (risk.RiskAttributes == null)
+        {
+            risks.Remove(risk);
+            if (risks.Any())
+            {
+                selectedRiskIndex = risks.IndexOf(risks.First());
+                selectedCategory = risks[selectedRiskIndex].Category;
+            }
+            else
+            {
+                if (!supplier.Categories.Any() || supplier.Categories == null)
+                {
+                    hasCategories = false;
+                }
+                else
+                {
+                    selectedCategory = supplier.Categories.First();
+                }
+                isAddingNew = true;
+            }
+        }
+        StateHasChanged();
+    }
+    
     //Update supplier Invoked in QualifyRisk Card
     private async Task UpdateSupplier()
     {

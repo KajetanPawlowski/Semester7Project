@@ -33,9 +33,20 @@ public class SurveyHttpClient : ISurveyHttpClient
         return categories;
     }
 
-    public Task<List<Risk>> GetGenericRisksAsync(int categoryId)
+    public async Task<List<Risk>> GetGenericRisksAsync()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await client.GetAsync("/Risk");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Risk> risks = JsonSerializer.Deserialize<List<Risk>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return risks;
     }
 
     public async Task<List<string>> GetRiskAttributesTypesAsync()
