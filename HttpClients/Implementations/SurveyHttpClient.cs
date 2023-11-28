@@ -38,19 +38,56 @@ public class SurveyHttpClient : ISurveyHttpClient
         throw new NotImplementedException();
     }
 
-    public Task<List<string>> GetRiskAttributesTypesAsync()
+    public async Task<List<string>> GetRiskAttributesTypesAsync()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await client.GetAsync("/Risk/Attribute");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<RiskAttribute> attributes = JsonSerializer.Deserialize<List<RiskAttribute>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        List<string> attributeTypes = attributes.Select(attr => attr.AttributeType).Distinct().ToList();
+        return attributeTypes;
     }
 
-    public Task<List<RiskAttribute>> GetRiskAttributesAsync(string attributeType)
+    public async Task<List<RiskAttribute>> GetRiskAttributesAsync()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await client.GetAsync("/Risk/Attribute");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<RiskAttribute> attributes = JsonSerializer.Deserialize<List<RiskAttribute>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return attributes;
     }
 
-    public Task<Risk> QualifyRiskAsync(Risk risk, List<RiskAttribute> attributes)
+    public async Task<Risk> AddRiskAsync(CreateRiskDTO dto)
     {
-        throw new NotImplementedException();
+        string dtoAsJson = JsonSerializer.Serialize(dto);
+        StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await client.PostAsync("/Risk", content);
+        string responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(responseContent);
+        }
+        Risk created = JsonSerializer.Deserialize<Risk>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return created;
     }
 
     public Task<List<Question>> GetQuestionsAsync(int supplierId)
@@ -81,14 +118,5 @@ public class SurveyHttpClient : ISurveyHttpClient
     {
         throw new NotImplementedException();
     }
-
-    public Task AssignCategoryAsync(int supplierId, int categoryId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<Risk>> AddSpecificRiskAsync(int supplierId, Risk specificRisk)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

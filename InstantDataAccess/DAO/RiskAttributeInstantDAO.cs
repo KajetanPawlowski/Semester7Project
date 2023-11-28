@@ -39,6 +39,11 @@ public class RiskAttributeInstantDAO : IRiskAttributeDAO
         return await Task.FromResult(existing);
     }
 
+    public Task<List<RiskAttribute>> GetAllAsync()
+    {
+        return Task.FromResult(context.RiskAttributes.ToList());
+    }
+
     public Task<List<RiskAttribute>> GetByTypeAsync(string type)
     {
         List<RiskAttribute> riskAttributes = context.RiskAttributes

@@ -9,8 +9,8 @@ public interface ISurveyHttpClient
     Task<List<RiskCategory>> GetCategoriesAsync();
     Task<List<Risk>> GetGenericRisksAsync(int categoryId);
     Task<List<string>> GetRiskAttributesTypesAsync();
-    Task<List<RiskAttribute>> GetRiskAttributesAsync(string attributeType);
-    Task<Risk> QualifyRiskAsync(Risk risk, List<RiskAttribute> attributes);
+    Task<List<RiskAttribute>> GetRiskAttributesAsync();
+    Task<Risk> AddRiskAsync(CreateRiskDTO dto);
     
     //Using Survey Logic
     Task<List<Question>> GetQuestionsAsync(int supplierId);
@@ -18,8 +18,6 @@ public interface ISurveyHttpClient
     Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey);
     
     //Using Supplier Logic
-    Task AssignCategoryAsync(int supplierId, int categoryId);
-    Task<List<Risk>> AddSpecificRiskAsync(int supplierId, Risk specificRisk);
     
     //Using User Logic 
     

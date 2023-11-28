@@ -1,0 +1,47 @@
+@using Domain.Model
+<!-- Side Menu -->
+                <div class="sidebar">
+                    <ul class="list-group">
+                        @foreach (var category in Categories)
+                        {
+                            <li class="list-group-item">
+                                <h5>@category.CategoryName</h5>
+                                @foreach (var risk in Risks.Where(r => r.Category.CategoryId == category.CategoryId))
+                                {
+                                    <div @onclick="() => SelectRisk(risk)" class="list-group-item list-group-item-action">
+                                        - @risk.Name
+                                        @if (risk.RiskAttributes != null)
+                                        {
+                                            <p style="float: right"> Done </p>
+                                        }
+                                    </div>
+                                }
+                                <div class="list-group-item list-group-item-action" @onclick="() => OpenAddRisk(category)">
+                                    + Add Risk
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+@code {
+    [Parameter]
+    public List<RiskCategory> Categories { get; set; }
+    [Parameter]
+    public List<Risk> Risks { get; set; }
+    [Parameter]
+    public EventCallback<Risk> SelectRiskNotify { get; set; }
+    [Parameter]
+    public EventCallback<RiskCategory> AddRiskNotify { get; set; }
+    
+
+    void SelectRisk(Risk currentRisk)
+    {
+        SelectRiskNotify.InvokeAsync(currentRisk);
+    }
+
+    void OpenAddRisk(RiskCategory category)
+    {
+        AddRiskNotify.InvokeAsync(category);
+    }
+}
