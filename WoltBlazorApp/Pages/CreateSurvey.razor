@@ -1,64 +1,92 @@
-﻿@page "/CreateSurvey"
+﻿@page "/CreateSurvey/{supplierId}"
 
 @using Domain.DTO
 @using Domain.Model
 @using HttpClients.Interfaces
 @inject ISurveyHttpClient _surveyHttpClient
+@inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
 
-
-<h1>Create Survey</h1>
-<div class="card-container">
-    @if (addingNew)
-    {
-        <CreateQuestionCard CreateQuestionCallback="AddQuestionToSurvey" />
-    }
-    else
-    {
+@if (newSurvey == null)
+{
+    <p> Loading... </p>
+}
+else
+{
+    <h1>Create Survey</h1>
+    <div class="card-container">
+        @if (addingNew)
+        {
+            <CreateQuestionCard CreateQuestionCallback="AddQuestionToSurvey"/>
+        }
+        else
+        {
+            <div class="card">
+                <button @onclick="AddQuestion">Add Question</button>
+            </div>
+        }
+        @foreach (var item in newSurvey.Questions)
+        {
+            <QuestionCard question="@item"/>
+        }
         <div class="card">
-            <button @onclick="AddQuestion">Add Question</button>
+            <button @onclick="SaveSurvey">Save Survey</button>
         </div>
-    }
-    @foreach (var item in newSurvey.Questions)
-    {
-        <QuestionCard question="@item"/>
-    }
-    <div class="card">
-        <button @onclick="SaveSurvey">Save Survey</button>
     </div>
-</div>
+}
 
+@code 
+{
+    [Parameter]
+    public string supplierId { get; set; }
 
-
-
-
-@code {
     private List<Question> questions { get; set; }
     private CreateSurveyDTO newSurvey;
 
+    Supplier? supplier;
+
+    private string newName = "";
+
     bool addingNew = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await LoadQuestions();
         newSurvey = new CreateSurveyDTO();
         newSurvey.Questions = new List<CreateQuestionDTO>();
+    }
+
+    private async Task LoadQuestions()
+    {
+        int SupplierIdInt = int.Parse(supplierId);
+        questions = await _surveyHttpClient.GetQuestionsAsync(SupplierIdInt);
+        StateHasChanged();
     }
 
     private void AddQuestion()
     {
         addingNew = true;
     }
+
     private void AddQuestionToSurvey(CreateQuestionDTO newQuestion)
     {
         newSurvey.Questions.Add(newQuestion);
         addingNew = false;
         StateHasChanged();
-        
+
     }
 
     private async Task SaveSurvey()
     {
-        
-    }
+        try
+        {
+            await _surveyHttpClient.CreateSurveyAsync(newSurvey);
+            navMgr.NavigateTo($"/SupplierProfile/{supplierId}");
 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error saving survey: {e.Message}");
+        }
+    }
 }
