@@ -11,7 +11,7 @@ public interface IRiskLogic
     Task<RiskCategory> GetRiskCategoryById(int categoryId);
     Task<List<Risk>> GetGenericRiskByCategory(int categoryId);
     Task<List<RiskAttribute>> GetRiskAttributesByType(string type);
-    Task<List<string>> GetRiskAttributesTypes();
+    Task<List<RiskAttribute>> GetRiskAttributes();
     Task<List<RiskCategory>> GetRiskCategories();
     Task<Risk> QualifyRisk(Risk risk, List<RiskAttribute> attributes);
 
