@@ -188,12 +188,6 @@
 
     private async Task SaveSupplier()
     {
-        Console.WriteLine("Company Name: " + toCreate.SupplierName);
-        Console.WriteLine("Country: " + toCreate.Country);
-        Console.WriteLine("Headcount: " + toCreate.HeadCount);
-        Console.WriteLine("Selected User: " + toCreate.RepresentativeId);
-        Console.WriteLine("Final Products List: " + string.Join(", ", toCreate.SuppliedProducts));
-
         await _supplierHttpClient.CreateSupplier(toCreate);
         navMgr.NavigateTo("/");
     }

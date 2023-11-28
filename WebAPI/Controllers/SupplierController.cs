@@ -57,4 +57,35 @@ public class SupplierController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    //Patch Supplier
+    [HttpPatch, AllowAnonymous]
+    public async Task<ActionResult<Supplier>> UpdateAsync(UpdateSupplierDTO dto)
+    {
+        try
+        {
+            Supplier supplier = await _supplierLogic.GetSupplierById(dto.SupplierId);
+            if (dto.CategoriesId != null)
+            {
+                foreach (var catId in dto.CategoriesId)
+                {
+                    supplier = await _supplierLogic.AssignNewRiskCategory(dto.SupplierId, catId);
+                }
+            }
+
+            if (dto.Risks != null)
+            {
+                foreach (var risk in dto.Risks)
+                {
+                    supplier = await _supplierLogic.AssignSpecificRisk(dto.SupplierId, risk);
+                }
+            }
+            return Created($"/Supplier/{supplier.Id}", supplier);
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }

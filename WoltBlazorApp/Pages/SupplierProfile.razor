@@ -1,16 +1,16 @@
-﻿@page "/SupplierProfile"
+﻿@page "/SupplierProfile/{SupplierId}"
 @using HttpClients.Interfaces
 @using Domain.Model
 @using HttpClients.Implementations
-@inject ISupplierHttpClient SupplierHttpClient
+@inject ISupplierHttpClient _supplierHttpClient
 
 @inject NavigationManager navMgr
 
 <PageTitle>Supplier Profile</PageTitle>
 <h3>Surveys</h3>
-@if (_surveys == null)
+@if (supplier == null || _surveys == null)
 {
-    <p>Load survey's data...</p>
+    <p>Load supplier data...</p>
 }
 else
 {
@@ -39,23 +39,28 @@ else
 
 
 @code {
-    private List<Survey> _surveys = null;
-    private string msg = "";
+    // Cascading parameter
+    [Parameter]
+    public string SupplierId { get; set; }
 
-    private int supplierId;
+    private Supplier? supplier;
+    private List<Survey>?  _surveys;
+    private string msg = "";
+    
 
     protected override async Task OnInitializedAsync()
     {
-        supplierId = 1;
-        await LoadSurveys();
+        await Load();
     }
 
-    private async Task LoadSurveys()
+    private async Task Load()
     {
         try
         {
-            _surveys = await SupplierHttpClient.GetSurveys(supplierId);
-
+            int SupplierIdInt = int.Parse(SupplierId);
+            supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+            //_surveys = await _supplierHttpClient.GetSurveys(supplierId);
+            
         }
         catch (Exception e)
         {

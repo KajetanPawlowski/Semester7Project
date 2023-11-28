@@ -57,6 +57,6 @@ public class SupplierInstantDAO : ISupplierDAO
         
         
         context.SaveChanges();
-        return (Task<Supplier>)Task.CompletedTask;
+        return Task.FromResult(existing);
     }
 }
