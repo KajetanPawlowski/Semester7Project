@@ -14,7 +14,7 @@
                 <input type="text" @bind="userName"/>
             </div>
             <div class="field">
-                <label style="text-align: center">Password:</label>
+                <label>Password:</label>
                 <input type="password" @bind="password"/>
             </div>
             @if (!string.IsNullOrEmpty(errorLabel))
@@ -33,6 +33,7 @@
     <Authorized>
         <div class="card">
             <h3>Hello, @context.User.Identity.Name</h3>
+            <img src="img/WoltSupplier.png"/>
         </div>
     </Authorized>
 </AuthorizeView>
