@@ -39,8 +39,12 @@ else
                 <td>
                     <button @onclick="() => AssessSupplier(item)">
                         Assess Supplier
-                        </button>
+                    </button>
+                    <button @onclick="() => OpenSupplierProfile(item)">
+                        Open Supplier Profile
+                    </button>
                 </td>
+               
             </tr>
         }
         </tbody>
@@ -84,8 +88,15 @@ else
             navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Risks");
         }
     }
-    private async Task AddSupplier()
+    private void AddSupplier()
     {
         navMgr.NavigateTo("/AddSupplier");
     }
+    
+    private void OpenSupplierProfile(Supplier supplier )
+    {
+        navMgr.NavigateTo($"/SupplierProfile/"+supplier.Id);
+    }
+    
+    
 }

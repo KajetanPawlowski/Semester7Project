@@ -121,7 +121,6 @@ public class SurveyHttpClient : ISurveyHttpClient
     {
         string dtoAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
-        
         HttpResponseMessage response = await client.PostAsync("/Survey", content);
         string responseContent = await response.Content.ReadAsStringAsync();
 

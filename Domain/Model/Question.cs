@@ -6,6 +6,6 @@ public class Question
     public string Body { get; set; }
     public List<string> AllAnswers { get; set; }
     public RiskCategory Category {get; set; }
-    public Risk RelatedRisk { get; set; }
+    public Risk? RelatedRisk { get; set; }
     public int? SelectedAnswerId { get; set; }
 }
