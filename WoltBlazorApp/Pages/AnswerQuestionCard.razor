@@ -1,14 +1,13 @@
 @using Domain.Model
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Answer Question</h5>
-        <p>@Display.Body</p>
+        <h5 class="card-title">@Display.Body</h5>
 
         <div class="form-check">
              @foreach(var answer in Display.AllAnswers)
              {
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="answerRadio" id="@($"answer-{answer}")" value="@answer" @onclick="" />
+            <div class="form-check" @onclick="()=>QuestionsAnswered(answer)">
+                <input class="form-check-input" type="checkbox" name="answerRadio" id="@Display.AllAnswers.IndexOf(answer)" value="@Display.AllAnswers.IndexOf(answer)"  />
                 <label class="form-check-label" for="@($"answer-{answer}")">
                     @answer
                 </label>
@@ -16,7 +15,6 @@
             }           
         </div>
 
-        <button class="btn btn-primary" @onclick="">Submit Answer</button>
     </div>
 </div>
 
@@ -24,5 +22,14 @@
     [Parameter]
     public Question Display { get; set; }
     
-    
+    [Parameter]
+    public EventCallback<Question> QuestionAnsweredNotify { get; set; }
+
+    private async Task QuestionsAnswered(string answer)
+    {
+        Display.SelectedAnswerId = Display.AllAnswers.IndexOf(answer);
+        await QuestionAnsweredNotify.InvokeAsync(Display);
+    }
+
+
 }

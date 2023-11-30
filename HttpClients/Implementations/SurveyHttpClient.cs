@@ -144,16 +144,36 @@ public class SurveyHttpClient : ISurveyHttpClient
             throw new Exception(response +"");
         }
 
-        Survey survey = JsonSerializer.Deserialize<Survey>(result, new JsonSerializerOptions
+        List<Survey> surveys = JsonSerializer.Deserialize<List<Survey>>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
-        return survey;
+        if (!surveys.Any())
+        {
+            throw new Exception("No survey found");
+        }
+        return surveys.First();
     }
 
-    public Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey)
+    public async Task<Survey> AnswerSurveyAsync(AnswerSurveyDTO dto)
     {
-        throw new NotImplementedException();
+        string dtoAsJson = JsonSerializer.Serialize(dto);
+        Console.WriteLine(dtoAsJson);
+        StringContent content = new(dtoAsJson, Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await client.PatchAsync("/Survey", content);
+        string responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(responseContent);
+        }
+        Survey updated = JsonSerializer.Deserialize<Survey>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return updated;
     }
+    
 
 }

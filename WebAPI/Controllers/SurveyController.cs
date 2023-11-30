@@ -82,5 +82,22 @@ public class SurveyController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    [HttpPatch, AllowAnonymous]
+    public async Task<ActionResult<Survey>> AnswerSurvey(AnswerSurveyDTO dto)
+    {
+        try
+        {
+            Survey survey = await _surveyLogic.AnswerSurveyAsync(dto);
+            return Ok(survey);
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    
+    }
     
 }

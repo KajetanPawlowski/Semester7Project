@@ -16,8 +16,9 @@ public class SurveyLogic : ISurveyLogic
     private readonly ISupplierDAO _supplierDao;
     private readonly ISurveyDAO _surveyDao;
     private readonly IQuestionDAO _questionDao;
-    public SurveyLogic(IUserDAO userDao, ISupplierDAO supplierDao, IRiskCategoryDAO riskCategoryDao, 
-        ISurveyDAO surveyDao,IRiskDAO riskDao, IQuestionDAO questionDao, IRiskAttributeDAO riskAttributeDao)
+
+    public SurveyLogic(IUserDAO userDao, ISupplierDAO supplierDao, IRiskCategoryDAO riskCategoryDao,
+        ISurveyDAO surveyDao, IRiskDAO riskDao, IQuestionDAO questionDao, IRiskAttributeDAO riskAttributeDao)
     {
         _userDao = userDao;
         _supplierDao = supplierDao;
@@ -27,6 +28,7 @@ public class SurveyLogic : ISurveyLogic
         _questionDao = questionDao;
         _riskAttributeDao = riskAttributeDao;
     }
+
     public async Task<List<Question>> GenerateQuestions(int supplierId)
     {
         Supplier supplier = await _supplierDao.GetByIdAsync(supplierId);
@@ -35,10 +37,10 @@ public class SurveyLogic : ISurveyLogic
         {
             relevantQuestions.AddRange(await _questionDao.GetByCategory(category));
         }
-        
+
         return relevantQuestions;
     }
-    
+
     public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)
     {
         //make sure all the questions already added!!!
@@ -46,7 +48,7 @@ public class SurveyLogic : ISurveyLogic
         List<Question> questions = new List<Question>();
         foreach (var questionDto in dto.Questions)
         {
-            questions.Add(await AddQuestion(questionDto)); 
+            questions.Add(await AddQuestion(questionDto));
         }
 
         Supplier supplier = await _supplierDao.GetByIdAsync(dto.SupplierId);
@@ -78,25 +80,44 @@ public class SurveyLogic : ISurveyLogic
             Body = dto.Body,
             AllAnswers = dto.AllAnswers,
             Category = dto.RiskCategory,
-           
+
         };
-        
+
         return await _questionDao.CreateAsync(toCreate);
     }
-    public Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey)
+
+    public async Task<Survey> AnswerSurveyAsync(AnswerSurveyDTO dto)
     {
-        throw new NotImplementedException();
+        Survey toUpdate = await _surveyDao.GetByIdAsync(dto.surveyId);
+        try
+        {
+            foreach (var question in dto.answerQuestions)
+            {
+                CheckForAnswers(question);
+            }
+
+            toUpdate.Questions = dto.answerQuestions;
+            toUpdate.AnsweredTime = DateTime.Now;
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return await _surveyDao.UpdateAsync(toUpdate);
     }
 
     private async Task ValidateSurveyCreationDTO(CreateSurveyDTO dto)
     {
         //validate if the questions exist
     }
+
     private async Task ValidateQuestionCreationDTO(CreateQuestionDTO dto)
     {
         try
         {
-            
+
             await _riskCategoryDao.GetByIdAsync(dto.RiskCategory.CategoryId);
         }
 
@@ -108,11 +129,22 @@ public class SurveyLogic : ISurveyLogic
         {
             await _riskCategoryDao.CreateAsync(dto.RiskCategory);
         }
-        
+
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    private void CheckForAnswers(Question question)
+    {
+        // Check if the answer is selected
+        if (question.SelectedAnswerId == null)
+        {
+            // Throw an error or handle the case where the answer is not selected
+            throw new Exception("Answer not selected.");
+        }
+
     }
 }
