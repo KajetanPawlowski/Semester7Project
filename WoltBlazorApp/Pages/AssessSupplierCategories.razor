@@ -5,66 +5,77 @@
 @inject ISupplierHttpClient _supplierHttpClient
 @inject ISurveyHttpClient _surveyHttpClient
 @inject NavigationManager navMgr
-<h3>Assess Product Categories</h3>
-<div class="card-container">
-    @if (supplier == null)
-    {
-        <p> Loading... </p>
-    }
-    else
-    {
-        <div class="card">
-            <div class="card-title">
-                <h6>Supplier Products: @string.Join(", ", supplier.SuppliedProducts)</h6>
-            </div>
-            <div class="card-body">
-                    <div class="card">
-                        <div class="card-title">
-                            <h6>Product: @supplier.SuppliedProducts[currentProduct]</h6>
-                        </div>
-                        <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Product Category</th>
-                                    <th>Select Relevant</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (RiskCategory category in _allCategories)
-                                {
-                                    <tr>
-                                        <td>@category.CategoryName</td>
-                                        <td>
-                                            @if (selectedCategories.FirstOrDefault(c => c.Equals(category)) == null)
-                                            {
-                                                <button @onclick="() => SelectCategory(category)">
-                                                    Select
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <button @onclick="() => SelectCategory(category)">
-                                                    Selected
-                                                </button>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
 
-                        <div class="card-footer">
-                            <button @onclick="NextProduct" >
-                                @btntext
-                            </button>
+
+<AuthorizeView Policy="isWoltSpecialist">
+    <Authorized>
+        <h3>Assess Product Categories</h3>
+        <div class="card-container">
+            @if (supplier == null)
+            {
+                <p> Loading... </p>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-title">
+                        <h6>Supplier Products: @string.Join(", ", supplier.SuppliedProducts)</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-title">
+                                <h6>Product: @supplier.SuppliedProducts[currentProduct]</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Product Category</th>
+                                        <th>Select Relevant</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (RiskCategory category in _allCategories)
+                                    {
+                                        <tr>
+                                            <td>@category.CategoryName</td>
+                                            <td>
+                                                @if (selectedCategories.FirstOrDefault(c => c.Equals(category)) == null)
+                                                {
+                                                    <button @onclick="() => SelectCategory(category)">
+                                                        Select
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button @onclick="() => SelectCategory(category)">
+                                                        Selected
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="card-footer">
+                                <button @onclick="NextProduct">
+                                    @btntext
+                                </button>
+                            </div>
                         </div>
                     </div>
-            </div>
+                </div>
+            }
         </div>
-    }
-</div>
+    </Authorized>
+    <NotAuthorized>
+        You need to be a Wolt Specialist
+        <img class="icon" src="img/NotAuthorized.png"/>
+    </NotAuthorized>
+</AuthorizeView>
+ 
 
 @code {
     // Cascading parameter

@@ -16,10 +16,11 @@ public interface ISupplierHttpClient
     public Task<Supplier> AddSupplierCategories(UpdateSupplierDTO dto);
     public Task<Supplier> UpdateSupplierRisks(UpdateSupplierDTO dto);
     public Task<List<Supplier>> GetSuppliers();
-    
+    public Task<Supplier> GetSupplierByRepMail(string repEmail);
+
+
     //Using User Logic
-    public Task<string> GetSupplierRepMail(int repId);
-    
+
     //Using Several
     
     //Not Implemented
