@@ -21,12 +21,12 @@
     {
         <div class="row">
             <div class="col-md-3">
-                <CreateSurveySidebar Categories="supplier.Categories" Questions="questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
+                <CreateSurveySidebar Categories="supplier.Categories" Questions="newSurvey.Questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
             </div>
             <div class="col-md-9">
                 @if (addingNew)
                 {
-                    <CreateQuestionCard CreateQuestionCallback="CreateQuestion"/>
+                    <CreateQuestionCard Category="selectedQuestionCategory" CreateQuestionCallback="CreateQuestion"/>
                 }
                 else
                 {
@@ -34,10 +34,13 @@
                     {
                         <QuestionCard question="@item"/>
                     }
-                    <div class="card">
-                        <button @onclick="SaveSurvey">Save Survey</button>
-                    </div>
-                } 
+                   
+                }
+                <div class="card-footer">
+                    <button @onclick="SaveSurvey">
+                        Save Survey
+                    </button>
+                </div>
             </div>
            
         </div> 
@@ -53,6 +56,7 @@
 
     int selectedQuestionIndex;
     RiskCategory selectedQuestionCategory;
+    Risk selectedQuestionRisk;
 
     Supplier? supplier;
 
@@ -67,7 +71,11 @@
         await LoadQuestions();
         newSurvey = new CreateSurveyDTO();
         newSurvey.Questions = new List<CreateQuestionDTO>();
-        
+        selectedQuestionCategory = supplier.Categories.First();
+        selectedQuestionRisk = supplier.RelevantRisks.First();
+        Console.WriteLine(selectedQuestionCategory.CategoryName);
+        StateHasChanged();
+
     }
 
     private async Task LoadSupplier()
@@ -80,7 +88,7 @@
     private async Task LoadQuestions()
     {
         questions = await _surveyHttpClient.GetQuestionsAsync(supplier.Id);
-        StateHasChanged();
+        
     }
 
     private void AddQuestion(RiskCategory category)
@@ -91,17 +99,21 @@
 
     private void CreateQuestion(CreateQuestionDTO newQuestion)
     {
+        
         newSurvey.Questions.Add(newQuestion);
         addingNew = false;
         StateHasChanged();
 
     }
 
-    private void SelectQuestion(Question question)
+
+
+    private void SelectQuestion(CreateQuestionDTO question)
     {
         addingNew = false;
-        selectedQuestionIndex = questions.IndexOf(question);
-        selectedQuestionCategory = questions[selectedQuestionIndex].Category;
+        selectedQuestionIndex = newSurvey.Questions.IndexOf(question);
+        selectedQuestionCategory = newSurvey.Questions[selectedQuestionIndex].RiskCategory;
+        selectedQuestionRisk = newSurvey.Questions[selectedQuestionIndex].RelatedRisk;
         StateHasChanged();
     }
 
@@ -109,6 +121,9 @@
     {
         try
         {
+            newSurvey.SupplierId = supplier.Id;
+            newSurvey.CreatorId = 1;
+            newSurvey.Questions[selectedQuestionIndex].RelatedRisk = selectedQuestionRisk;
             await _surveyHttpClient.CreateSurveyAsync(newSurvey);
             navMgr.NavigateTo($"/SupplierProfile/{SupplierId}");
 

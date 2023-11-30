@@ -3,7 +3,7 @@
 <div class="card">
     <div class="card-body" >
     <div>
-        <h6>Create Question: <input type="text" class="form-control" @bind="newBody" placeholder="What is the question"/></h6> 
+        <h6>Create Question: @Category.CategoryName <input type="text" class="form-control" @bind="newBody" placeholder="What is the question"/></h6> 
     </div>
         <div class="input-group mb-3">
             <input type="text" class="form-control"@bind="newAnswer" placeholder="Add new answer"/>
@@ -30,7 +30,7 @@
             }
         </div>    
         <div class="card-footer">
-            <button @onclick="SaveQuestion">
+            <button @onclick="CreateQuestion">
                 Add Question
             </button>
         </div>
@@ -40,6 +40,11 @@
 @code {
     [Parameter]
     public Action<CreateQuestionDTO> CreateQuestionCallback { get; set; }
+    
+    [Parameter]
+    public RiskCategory Category { get; set; }
+    
+   
 
     private CreateQuestionDTO toCreate;
     private string newBody = "";
@@ -49,6 +54,8 @@
     {
         toCreate = new CreateQuestionDTO();
         toCreate.AllAnswers ??= new List<string>();
+        toCreate.RiskCategory = Category;
+      
     }
     private void AddAnswer()
     {
@@ -59,7 +66,7 @@
         }
     }
 
-    private void SaveQuestion()
+    private void CreateQuestion()
     {
         toCreate.Body = newBody;
         CreateQuestionCallback?.Invoke(toCreate);

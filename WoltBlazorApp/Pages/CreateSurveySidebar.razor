@@ -1,4 +1,5 @@
 ﻿@using Domain.Model
+@using Domain.DTO
 <!-- Side Menu -->
                 <div class="sidebar">
                     <ul class="list-group">
@@ -6,13 +7,13 @@
                         {
                             <li class="list-group-item">
                                 <h5>@category.CategoryName</h5>
-                                @foreach (var question in Questions.Where(q => q.Category.CategoryId == category.CategoryId))
+                                @foreach (var question in Questions.Where(q => q.RiskCategory.CategoryId == category.CategoryId))
                                 {
                                     <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
                                         - @question.Body
                                         @if (question.Body != null)
                                         {
-                                            <p style="float: right"> Done </p>
+                                            <p style="float: right"> New Question Added </p>
                                         }
                                     </div>
                                 }
@@ -28,14 +29,14 @@
     [Parameter]
     public List<RiskCategory> Categories { get; set; }
     [Parameter]
-    public List<Question> Questions { get; set; }
+    public List<CreateQuestionDTO> Questions { get; set; }
     [Parameter]
-    public EventCallback<Question> SelectQuestionNotify { get; set; }
+    public EventCallback<CreateQuestionDTO> SelectQuestionNotify { get; set; }
     [Parameter]
     public EventCallback<RiskCategory> AddQuestionNotify { get; set; }
     
 
-    void SelectQuestion(Question currentQuestion)
+    void SelectQuestion(CreateQuestionDTO currentQuestion)
     {
         SelectQuestionNotify.InvokeAsync(currentQuestion);
     }
