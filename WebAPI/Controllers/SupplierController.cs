@@ -21,18 +21,22 @@ public class SupplierController : ControllerBase
     
     //Get Suppliers by Id
     [HttpGet,  AllowAnonymous]
-    public async Task<ActionResult<List<Supplier>>> GetSupplierByIdAsync([FromQuery] int? supplierId)
+    public async Task<ActionResult<List<Supplier>>> GetSupplierByIdAsync([FromQuery] int? supplierId, string? repEmail)
     {
         try
         {
             List<Supplier> suppliers = new List<Supplier>();
-            if (supplierId == null)
+            if (supplierId != null)
             {
-                suppliers = await _supplierLogic.GetSuppliersAsync();
+                suppliers.Add(await _supplierLogic.GetSupplierById((int)supplierId));
+            }
+            else if (repEmail != null)
+            {
+                suppliers.Add(await _supplierLogic.GetSupplierByMail(repEmail));
             }
             else
             {
-                suppliers.Add(await _supplierLogic.GetSupplierById((int)supplierId));
+                suppliers = await _supplierLogic.GetSuppliersAsync();
             }
             return Ok(suppliers);
         }

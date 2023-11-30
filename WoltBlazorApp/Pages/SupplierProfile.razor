@@ -3,6 +3,7 @@
 @using Domain.Model
 @using HttpClients.Implementations
 @inject ISupplierHttpClient _supplierHttpClient
+@attribute [Authorize]
 
 @inject NavigationManager navMgr
 
@@ -73,6 +74,8 @@ else
     {
         navMgr.NavigateTo("/AnswerSurvey");
     }
+    
+    
 
     
 
