@@ -148,9 +148,9 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers.First();
     }
 
-
-    public Task<Survey> ResendSurvey(int surveyId)
+    public void NotifySupplier(int surveyId)
     {
         throw new NotImplementedException();
     }
+    
 }

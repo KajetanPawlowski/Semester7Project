@@ -24,5 +24,5 @@ public interface ISupplierHttpClient
     //Using Several
     
     //Not Implemented
-    public Task<Survey> ResendSurvey(int surveyId);
+    public void NotifySupplier (int surveyId);
 }

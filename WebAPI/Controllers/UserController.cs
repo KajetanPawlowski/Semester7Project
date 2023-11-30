@@ -48,4 +48,24 @@ public class UserController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    /*//Send email to supplier
+    [HttpPost("Notify")]
+    [AllowAnonymous]
+    public async Task<ActionResult<User>> NotifySupplierAsync(NotifySupplierDTO dto)
+    {
+        User user = new User();
+        try
+        {
+             user = await _userLogic.NotifySupplier(dto);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+
+        return Ok(user);
+    }*/
 }
