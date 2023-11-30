@@ -91,13 +91,14 @@
         questions = await _surveyHttpClient.GetQuestionsAsync(supplier.Id);
         
     }
-
+    //Invoked form sidebar - Show create question card
     private void AddQuestion(RiskCategory category)
     {
         addingNew = true;
         selectedQuestionCategory = category;
+        StateHasChanged();
     }
-
+    //Invoked form Create Question Card - adds the question to the view
     private void CreateQuestion(CreateQuestionDTO newQuestion)
     {
         

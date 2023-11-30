@@ -1,4 +1,5 @@
-﻿using Application.DAOInterface;
+﻿using System.Reflection.Metadata;
+using Application.DAOInterface;
 using Domain.Model;
 
 namespace InstantDataAccess.DAO;
@@ -53,18 +54,13 @@ public class SurveyInstantDAO : ISurveyDAO
         return Task.FromResult(surveys);
     }
 
-    public Task<Survey> UpdateAsync(Survey survey)
+    public async Task<Survey> UpdateAsync(Survey survey)
     {
-        Survey? existing = context.Surveys.FirstOrDefault(s => s.Id== survey.Id);
-        if (existing == null)
-        {
-            throw new Exception("Survey not found");
-        }
+        Survey? existing = await GetByIdAsync(survey.Id);
         context.Surveys.Remove(existing);
         context.Surveys.Add(survey);
         
-        
         context.SaveChanges();
-        return (Task<Survey>)Task.CompletedTask;
+        return await Task.FromResult(survey);
     }
 }

@@ -1,0 +1,97 @@
+@page "/AnswerSurvey/{SurveyId}"
+@using Domain.Model
+@using HttpClients.Interfaces
+@using Domain.DTO
+@inject ISurveyHttpClient _surveyHttpClient
+@inject NavigationManager navMgr
+<h3>AnswerSurvey</h3>
+@if (survey == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="card">
+        @foreach (var question in survey.Questions)
+        {
+            if (survey.AnsweredTime == null)
+            {
+                <AnswerQuestionCard QuestionAnsweredNotify="AnswerQuestion" Display="question"/>
+            }
+            else
+            {
+                <ShowAnswerCard Display="question"/>
+            }
+        }
+        <div class="card-footer">
+            @if (survey.AnsweredTime == null)
+            {
+                <button class="btn " @onclick="SaveSurvey">Continue</button>
+            }
+            else
+            {
+                <button class="btn " @onclick="GoBack">Go back</button>
+            }
+            
+            <span>@errormsg</span>
+        </div>
+    </div>
+    
+}
+
+@code {
+    [Parameter]
+    public string SurveyId { get; set; }
+
+    private Survey survey;
+    private string errormsg = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSurvey();
+    }
+
+    async Task LoadSurvey()
+    {
+        int SurveyIdInt = int.Parse(SurveyId);
+        survey = await _surveyHttpClient.GetSurveyByIdAsync(SurveyIdInt);
+    }
+
+    void AnswerQuestion(Question updatedQuestion)
+    {
+        var existingQuestion = survey.Questions.FirstOrDefault(q => q.Id == updatedQuestion.Id);
+
+        if (existingQuestion != null)
+        {
+    // Replace the existing question with the updated one
+            survey.Questions[survey.Questions.IndexOf(existingQuestion)] = updatedQuestion;
+        }
+    }
+
+    void GoBack()
+    {
+        navMgr.NavigateTo($"/SupplierProfile/{survey.SupplierId}");
+    }
+
+    async Task SaveSurvey()
+    {
+        if (survey.Questions.FirstOrDefault(q => q.SelectedAnswerId == null) != null)
+        {
+            errormsg = "Answer ALL the questions";
+        }
+        else
+        {
+            AnswerSurveyDTO dto = new()
+            {
+                surveyId = survey.Id,
+                answerQuestions = survey.Questions
+            };
+            await _surveyHttpClient.AnswerSurveyAsync(dto);
+
+        }
+        await LoadSurvey();
+        StateHasChanged();
+        
+    }
+
+}
