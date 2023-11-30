@@ -131,10 +131,23 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers;
     }
 
-    public Task<string> GetSupplierRepMail(int repId)
+    public async Task<Supplier> GetSupplierByRepMail(string repEmail)
     {
-        throw new NotImplementedException();
+        string serializedMail = JsonSerializer.Serialize(repEmail);
+        HttpResponseMessage response = await client.GetAsync("/Supplier?repEmail="+serializedMail);
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Supplier> suppliers = JsonSerializer.Deserialize<List<Supplier>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return suppliers.First();
     }
+
 
     public Task<Survey> ResendSurvey(int surveyId)
     {

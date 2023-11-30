@@ -6,6 +6,7 @@
 @inject ISurveyHttpClient _surveyHttpClient
 @inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
+@attribute [Authorize(Policy = "isWoltSpecialist")]
 
 
 <div class="card-container">

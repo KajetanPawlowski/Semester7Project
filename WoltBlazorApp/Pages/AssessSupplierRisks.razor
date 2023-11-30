@@ -5,6 +5,7 @@
 @inject ISupplierHttpClient _supplierHttpClient;
 @inject ISurveyHttpClient _surveyHttpClient
 @inject NavigationManager navMgr
+@attribute [Authorize(Policy = "isWoltSpecialist")]
 
 
 <div class="container-fluid">
