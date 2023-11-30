@@ -22,11 +22,22 @@ public class SurveyController : ControllerBase
     
     //Get Surveys
     [HttpGet, AllowAnonymous]
-    public async Task<ActionResult<Survey>> GetSurveysAsync(int supplierId)
+    public async Task<ActionResult<Survey>> GetSurveysAsync(int? supplierId, int? surveyId)
     {
         try
         {
-            List<Survey> surveys = await _supplierLogic.GetSurveysAsync(supplierId);
+            List<Survey> surveys = new List<Survey>();
+            if (supplierId != null)
+            {
+                string temp = supplierId + "";
+                surveys = await _supplierLogic.GetSurveysAsync(int.Parse(temp));
+            }
+            else
+            {
+                string temp = surveyId + "";
+                surveys.Add(await _surveyLogic.GetSurveyById(int.Parse(temp)));   
+            }
+            
             return Ok(surveys);
 
         }
@@ -70,6 +81,23 @@ public class SurveyController : ControllerBase
             Console.WriteLine(e);
             return StatusCode(500, e.Message);
         }
+    }
+
+    [HttpPatch, AllowAnonymous]
+    public async Task<ActionResult<Survey>> AnswerSurvey(AnswerSurveyDTO dto)
+    {
+        try
+        {
+            Survey survey = await _surveyLogic.AnswerSurveyAsync(dto);
+            return Ok(survey);
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    
     }
     
 }
