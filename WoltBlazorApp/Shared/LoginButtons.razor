@@ -1,23 +1,32 @@
-﻿@page "/button"
-@using HttpClients.Interfaces
+﻿@using HttpClients.Interfaces
 @inject NavigationManager navMgr
 @inject IAuthHttpClient authService
 
 
+<AuthorizeView Policy="isOnlyWoltUser">
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <img src="img/SadYuhoPageNotFound.psd" class="img-fluid icon" @onclick="Logout" alt="Sad Yuho Page Not Found">
+    </div>
+</AuthorizeView>
+<AuthorizeView Policy="isWoltSpecialist">
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <img src="img/WoltSpecialist.png" class="img-fluid icon" @onclick="Logout" alt="Wolt Specialist">
+    </div>
+</AuthorizeView>
+<AuthorizeView Policy="isWoltSupplier">
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <img src="img/WoltSupplier.png" class="img-fluid icon" @onclick="Logout" alt="Wolt Supplier">
+    </div>
+</AuthorizeView>
+
 <AuthorizeView>
-    <Authorized>
-        <div>
-            <span class="welcome-span" @onclick="Logout">Hello @context.User.Identity.Name</span>
-            <img class="icon" @onclick="Logout"/>
-        </div>
-    </Authorized>
     <NotAuthorized>
-        <div>
-            <span class="welcome-span" @onclick="Login">Log in / Sign up :)</span>
-            <img class="icon" @onclick="Login"/>
+        <div class="position-fixed bottom-0 end-0 p-3">
+            <span class="welcome-span mb-2" @onclick="Login">Log in / Sign up :)</span>
         </div>
     </NotAuthorized>
 </AuthorizeView>
+
 
 @code {
     [CascadingParameter]

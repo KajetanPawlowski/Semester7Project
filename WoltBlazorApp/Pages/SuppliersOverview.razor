@@ -5,53 +5,54 @@
 @inject IUserHttpClient UserHttpClient
 @inject NavigationManager navMgr
 @attribute [Authorize]
-
 <PageTitle>Home page- Wolt</PageTitle>
 
-<h1>List of Suppliers</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">List of Suppliers</h1>
 
-@if (_suppliers == null)
-{
-    <p>Loading suppliers' data....</p>
-    <p>@msg</p>
-}
-else if (!_suppliers.Any())
-{
-    <p>No Suppliers to display<button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Company Name</th>
-            <th>Country</th>
-            <th>Representative Mail</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in _suppliers)
-        {
+    @if (_suppliers == null)
+    {
+        <p>Loading suppliers' data....</p>
+        <p>@msg</p>
+    }
+    else if (!_suppliers.Any())
+    {
+        <p>No Suppliers to display<button class="btn btn-primary addSupplierBtn" @onclick="AddSupplier">Add Supplier</button></p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <td>@item.CompanyName</td>
-                <td>@item.Country</td>
-                <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
-                <td>
-                    <button @onclick="() => AssessSupplier(item)">
-                        Assess Supplier
-                    </button>
-                    <button @onclick="() => OpenSupplierProfile(item)">
-                        Open Supplier Profile
-                    </button>
-                </td>
-               
+                <th>Company Name</th>
+                <th>Country</th>
+                <th>Representative Mail</th>
+                <th></th>
             </tr>
-        }
-        </tbody>
-    </table>
-    <button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
-}
+            </thead>
+            <tbody>
+            @foreach (var item in _suppliers)
+            {
+                <tr>
+                    <td>@item.CompanyName</td>
+                    <td>@item.Country</td>
+                    <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
+                    <td>
+                        <button class="btn btn-success me-2" @onclick="() => AssessSupplier(item)">
+                            Assess Supplier
+                        </button>
+                        <button class="btn btn-info" @onclick="() => OpenSupplierProfile(item)">
+                            Open Supplier Profile
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button class="btn btn-primary addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
+    }
+</div>
+
 
 
 @code {
