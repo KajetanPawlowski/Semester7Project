@@ -1,0 +1,28 @@
+@using Domain.Model
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Answer Question</h5>
+        <p>@Display.Body</p>
+
+        <div class="form-check">
+             @foreach(var answer in Display.AllAnswers)
+             {
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="answerRadio" id="@($"answer-{answer}")" value="@answer" @onclick="" />
+                <label class="form-check-label" for="@($"answer-{answer}")">
+                    @answer
+                </label>
+            </div>
+            }           
+        </div>
+
+        <button class="btn btn-primary" @onclick="">Submit Answer</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Question Display { get; set; }
+    
+    
+}

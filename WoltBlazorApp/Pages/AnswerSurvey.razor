@@ -1,0 +1,48 @@
+@page "/AnswerSurvey/{SurveyId}"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISurveyHttpClient _surveyHttpClient
+<h3>AnswerSurvey</h3>
+@if (survey == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="card">
+        @foreach (var question in survey.Questions)
+            {
+                if (question.SelectedAnswerId != null)
+                {
+                    <AnswerQuestionCard Display="question"/>
+                }
+                else
+                {
+                    <ShowAnswerCard Display="question"/>
+                }
+            }
+        <div class="card-footer">
+           <button class="btn " @onclick="">Save and Quit</button>
+        </div>
+    </div>
+    
+}
+
+@code {
+    [Parameter]
+    public string SurveyId { get; set; }
+
+    private Survey survey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSurvey();
+    }
+
+    async Task LoadSurvey()
+    {
+        int SurveyIdInt = int.Parse(SurveyId);
+        survey = await _surveyHttpClient.GetSurveyByIdAsync(SurveyIdInt);
+    }
+
+}

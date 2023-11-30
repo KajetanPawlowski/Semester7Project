@@ -70,7 +70,12 @@ public class SurveyLogic : ISurveyLogic
 
         return await _surveyDao.CreateAsync(toCreate);
     }
-    
+
+    public Task<Survey> GetSurveyById(int surveyId)
+    {
+        return _surveyDao.GetByIdAsync(surveyId);
+    }
+
     public async Task<Question> AddQuestion(CreateQuestionDTO dto)
     {
         //Add question each time new is created!!!

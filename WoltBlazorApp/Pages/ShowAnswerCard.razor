@@ -1,0 +1,15 @@
+@using Domain.Model
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title"> <p>@Display.Body</p> </h5>
+        
+        <p><strong>Selected Answer:</strong> @Display.AllAnswers[0]</p>
+   
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Question Display { get; set; }
+    
+}

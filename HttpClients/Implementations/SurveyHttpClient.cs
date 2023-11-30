@@ -136,6 +136,22 @@ public class SurveyHttpClient : ISurveyHttpClient
         return created;
     }
 
+    public async Task<Survey> GetSurveyByIdAsync(int surveyId)
+    {
+        HttpResponseMessage response = await client.GetAsync("/Survey?surveyId="+surveyId);
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        Survey survey = JsonSerializer.Deserialize<Survey>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return survey;
+    }
+
     public Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey)
     {
         throw new NotImplementedException();
