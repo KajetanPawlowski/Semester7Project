@@ -190,7 +190,7 @@
     private async Task SaveSupplier()
     {
         await _supplierHttpClient.CreateSupplier(toCreate);
-        navMgr.NavigateTo("/");
+        navMgr.NavigateTo("/SuppliersOverview");
     }
 
     protected override async void OnInitialized()
