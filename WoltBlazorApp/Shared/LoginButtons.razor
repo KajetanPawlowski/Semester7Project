@@ -8,13 +8,13 @@
     <Authorized>
         <div>
             <span class="welcome-span" @onclick="Logout">Hello @context.User.Identity.Name</span>
-            <img class="icon" src="img/Logout.png" @onclick="Logout"/>
+            <img class="icon" @onclick="Logout"/>
         </div>
     </Authorized>
     <NotAuthorized>
         <div>
             <span class="welcome-span" @onclick="Login">Log in / Sign up :)</span>
-            <img class="icon" src="img/Login.png" @onclick="Login"/>
+            <img class="icon" @onclick="Login"/>
         </div>
     </NotAuthorized>
 </AuthorizeView>
