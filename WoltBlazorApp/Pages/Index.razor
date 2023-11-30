@@ -14,6 +14,7 @@
                 <input type="text" @bind="userName"/>
             </div>
             <div class="field logInPage">
+
                 <label>Password:</label>
                 <input type="password" @bind="password"/>
             </div>
@@ -33,6 +34,7 @@
     <Authorized>
         <div class="card logInPage">
             <h3>Hello, @context.User.Identity.Name</h3>
+            <img src="img/WoltSupplier.png"/>
         </div>
     </Authorized>
 </AuthorizeView>
