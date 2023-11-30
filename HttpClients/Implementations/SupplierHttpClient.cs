@@ -32,9 +32,30 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers.First();
     }
 
-    public Task<List<Survey>> GetSurveys(int supplierId)
+    public async Task<List<Survey>> GetSurveys(int supplierId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            HttpResponseMessage response = await client.GetAsync("/Survey?supplierId=" +supplierId);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to retrieve surveys. Status code: {response.StatusCode}");
+            }
+
+            string result = await response.Content.ReadAsStringAsync();
+            List<Survey> surveys = JsonSerializer.Deserialize<List<Survey>>(result, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
+        
+            return surveys;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving surveys: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<Supplier> CreateSupplier(SupplierCreationDTO dto)

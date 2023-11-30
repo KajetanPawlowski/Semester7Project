@@ -29,8 +29,8 @@ else
             <tr>
                 <td>@item.Name</td>
                 <td>@item.CreationTime</td>
-                <td>@item.AnsweredTime</td>
-                <td><button class="feed-buttons answerSurveyBtn" @onclick="AnswerSurvey"></button></td>
+                @*<td>@item.AnsweredTime</td>*@
+                <td><button class="feed-buttons answerSurveyBtn" @onclick="AnswerSurvey">Answer Survey</button></td>
             </tr>
         }
         </tbody>
@@ -59,7 +59,7 @@ else
         {
             int SupplierIdInt = int.Parse(SupplierId);
             supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
-            //_surveys = await _supplierHttpClient.GetSurveys(supplierId);
+            _surveys = await _supplierHttpClient.GetSurveys(SupplierIdInt);
             
         }
         catch (Exception e)

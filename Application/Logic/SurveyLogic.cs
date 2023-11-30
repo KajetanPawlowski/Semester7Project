@@ -35,36 +35,29 @@ public class SurveyLogic : ISurveyLogic
         {
             relevantQuestions.AddRange(await _questionDao.GetByCategory(category));
         }
-
-        foreach (Risk risk in supplier.RelevantRisks)
-        {
-            if (risk.RiskAttributes != null)
-            {
-                foreach (RiskAttribute attribute in risk.RiskAttributes)
-                {
-                    relevantQuestions.AddRange(await _questionDao.GetByAttribute(attribute));
-                }
-            }
-        }
+        
         return relevantQuestions;
     }
     
     public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)
     {
         //make sure all the questions already added!!!
-        await ValidateSurveyCreationDTO(dto);
+        //await ValidateSurveyCreationDTO(dto);
         List<Question> questions = new List<Question>();
         foreach (var questionDto in dto.Questions)
         {
             questions.Add(await AddQuestion(questionDto)); 
         }
 
+        Supplier supplier = await _supplierDao.GetByIdAsync(dto.SupplierId);
+        List<Survey> surveys = await _surveyDao.GetSupplierSurveysAsync(dto.SupplierId);
+        string surveyName = supplier.CompanyName + " survey #" + surveys.Count;
         Survey toCreate = new()
         {
             SupplierId = dto.SupplierId,
             CreatorId = dto.CreatorId,
             CreationTime = DateTime.Now,
-            Name = dto.Name,
+            Name = surveyName,
             Questions = questions
         };
 
@@ -85,7 +78,7 @@ public class SurveyLogic : ISurveyLogic
             Body = dto.Body,
             AllAnswers = dto.AllAnswers,
             Category = dto.RiskCategory,
-            RelatedRisk = dto.RelatedRisk
+           
         };
         
         return await _questionDao.CreateAsync(toCreate);
@@ -103,7 +96,7 @@ public class SurveyLogic : ISurveyLogic
     {
         try
         {
-            await _riskDao.GetByIdAsync(dto.RelatedRisk.Id);
+            
             await _riskCategoryDao.GetByIdAsync(dto.RiskCategory.CategoryId);
         }
 
