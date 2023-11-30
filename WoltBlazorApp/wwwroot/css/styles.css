@@ -1,4 +1,71 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 body {
+    background-image: url('../img/BackPic.png');
+    background-size: cover;  /* Adjust as needed */
+    background-position: center; /* Adjust as needed */
+    background-repeat: no-repeat;
     background-color: #00C2E8;
 }
 
+
+.card {
+    width: 300px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.card.logInPage {
+    margin-left: 0; /* Set margin-left to 0 to align with the left */
+}
+
+.card h3 {
+    text-align: center;
+    color: #333;
+}
+
+.field.logInPage {
+    margin-bottom: 15px;
+}
+
+.field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.field input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.field.logInPage label[style="color: red"] {
+    color: red;
+}
+
+.loginbtn.logInPage {
+    width: 100%;
+    padding: 10px;
+    background-color: purple;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.loginbtn.logInPage:hover {
+    background-color: #00C2E8;
+}
+
+.card.logInPage.authorized {
+    background-color: #f0f0f0;
+}
