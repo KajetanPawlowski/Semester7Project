@@ -1,0 +1,101 @@
+﻿@page "/SuppliersOverview"
+@using Domain.Model
+@using HttpClients.Interfaces
+@inject ISupplierHttpClient SupplierHttpClient
+@inject IUserHttpClient UserHttpClient
+@inject NavigationManager navMgr
+@attribute [Authorize]
+
+<PageTitle>Home page- Wolt</PageTitle>
+
+<h1>List of Suppliers</h1>
+
+@if (_suppliers == null)
+{
+    <p>Loading suppliers' data....</p>
+    <p>@msg</p>
+}
+else if (!_suppliers.Any())
+{
+    <p>No Suppliers to display<button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Company Name</th>
+            <th>Country</th>
+            <th>Representative Mail</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in _suppliers)
+        {
+            <tr>
+                <td>@item.CompanyName</td>
+                <td>@item.Country</td>
+                <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
+                <td>
+                    <button @onclick="() => AssessSupplier(item)">
+                        Assess Supplier
+                    </button>
+                    <button @onclick="() => OpenSupplierProfile(item)">
+                        Open Supplier Profile
+                    </button>
+                </td>
+               
+            </tr>
+        }
+        </tbody>
+    </table>
+    <button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
+}
+
+
+@code {
+    private List<Supplier>? _suppliers;
+    private List<User>? _userMails;
+    private string msg = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSuppliers();
+    }
+
+    private async Task LoadSuppliers()
+    {
+        try
+        {
+            _suppliers = await SupplierHttpClient.GetSuppliers();
+            _userMails = await UserHttpClient.GetUsersAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to load Suppliers");
+            msg = "Failed to load data";
+        }
+    }
+
+    private void AssessSupplier(Supplier supplier )
+    {
+        if (supplier.Categories == null || !supplier.Categories.Any())
+        {
+            navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Categories");
+        }
+        else
+        {
+            navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Risks");
+        }
+    }
+    private void AddSupplier()
+    {
+        navMgr.NavigateTo("/AddSupplier");
+    }
+    
+    private void OpenSupplierProfile(Supplier supplier )
+    {
+        navMgr.NavigateTo($"/SupplierProfile/"+supplier.Id);
+    }
+}
