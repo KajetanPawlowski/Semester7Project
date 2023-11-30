@@ -6,6 +6,7 @@
 @inject IAuthHttpClient _authHttpClient
 @inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
+@attribute [Authorize(Policy = "isWoltUser")]
 <h3>Add Supplier</h3>
 
 <div class="card-container">

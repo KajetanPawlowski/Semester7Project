@@ -16,7 +16,8 @@ public interface ISurveyHttpClient
     //Using Survey Logic
     Task<List<Question>> GetQuestionsAsync(int supplierId);
     Task<Survey> CreateSurveyAsync(CreateSurveyDTO dto);
-    Task<Survey> AnswerSurveyAsync(int surveyId, Survey answeredSurvey);
+    Task<Survey> GetSurveyByIdAsync(int surveyId);
+    Task<Survey> AnswerSurveyAsync(AnswerSurveyDTO dto);
     
     //Using Supplier Logic
     

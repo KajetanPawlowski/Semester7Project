@@ -14,9 +14,9 @@ public class AuthorizationPolicies
             options.AddPolicy("isWoltSupplier", a =>
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "woltSupplier"));
             options.AddPolicy("isWoltUser", a =>
-                a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "woltUser"));
-            options.AddPolicy("isWoltSpecialist", a =>
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, specialistRoles));
+            options.AddPolicy("isWoltSpecialist", a =>
+                a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "woltSpecialist"));
             options.AddPolicy("isAdmin", a =>
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "admin"));
         });

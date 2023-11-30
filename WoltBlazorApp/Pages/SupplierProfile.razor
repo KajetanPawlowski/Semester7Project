@@ -3,6 +3,7 @@
 @using Domain.Model
 @using HttpClients.Implementations
 @inject ISupplierHttpClient _supplierHttpClient
+@attribute [Authorize]
 
 @inject NavigationManager navMgr
 
@@ -29,8 +30,16 @@ else
             <tr>
                 <td>@item.Name</td>
                 <td>@item.CreationTime</td>
-                @*<td>@item.AnsweredTime</td>*@
-                <td><button class="feed-buttons answerSurveyBtn" @onclick="AnswerSurvey">Answer Survey</button></td>
+                @if (item.AnsweredTime != null)
+                {
+                    <td>@item.AnsweredTime</td>
+                    <td><button class="feed-buttons answerSurveyBtn" @onclick="() => AnswerSurvey(item)">See Answers</button></td>
+                }
+                else
+                {
+                    <td>Pending...</td>
+                    <td><button class="feed-buttons answerSurveyBtn" @onclick="() => AnswerSurvey(item)">Answer Survey</button></td>
+                }
             </tr>
         }
         </tbody>
@@ -69,10 +78,12 @@ else
         }
     }
 
-    private async Task AnswerSurvey()
+    private void AnswerSurvey(Survey survey)
     {
-        navMgr.NavigateTo("/AnswerSurvey");
+        navMgr.NavigateTo("/AnswerSurvey/"+ survey.Id);
     }
+    
+    
 
     
 

@@ -1,0 +1,25 @@
+@using Domain.Model
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Display.Body</h5>
+        
+        <p><strong>Selected Answer:</strong> @answer</p>
+   
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Question Display { get; set; }
+
+    private string answer = "";
+
+    protected override void OnInitialized()
+    {
+        answer = "No answer";
+        if (Display.SelectedAnswerId == null) return;
+        var temp = (int)Display.SelectedAnswerId;
+        answer = Display.AllAnswers[temp];
+    }
+
+}

@@ -1,101 +1,78 @@
 ﻿@page "/"
+@using HttpClients.Interfaces 
 @using Domain.Model
-@using HttpClients.Interfaces
-@inject ISupplierHttpClient SupplierHttpClient
-@inject IUserHttpClient UserHttpClient
-@inject NavigationManager navMgr
+@inject IAuthHttpClient _authHttpClient
+@inject ISupplierHttpClient _supplierHttpClient
+@inject NavigationManager _navMgr
 
-<PageTitle>Home page- Wolt</PageTitle>
-
-<h1>List of Suppliers</h1>
-
-@if (_suppliers == null)
-{
-    <p>Loading suppliers' data....</p>
-    <p>@msg</p>
-}
-else if (!_suppliers.Any())
-{
-    <p>No Suppliers to display<button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Company Name</th>
-            <th>Country</th>
-            <th>Representative Mail</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in _suppliers)
-        {
-            <tr>
-                <td>@item.CompanyName</td>
-                <td>@item.Country</td>
-                <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
-                <td>
-                    <button @onclick="() => AssessSupplier(item)">
-                        Assess Supplier
-                    </button>
-                    <button @onclick="() => OpenSupplierProfile(item)">
-                        Open Supplier Profile
-                    </button>
-                </td>
-               
-            </tr>
-        }
-        </tbody>
-    </table>
-    <button class="feed-buttons addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
-}
-
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="card">
+            <h3>Please login</h3>
+            <div class="field">
+                <label>User name:</label>
+                <input type="text" @bind="userName"/>
+            </div>
+            <div class="field">
+                <label style="text-align: center">Password:</label>
+                <input type="password" @bind="password"/>
+            </div>
+            @if (!string.IsNullOrEmpty(errorLabel))
+            {
+                <div class="field">
+                    <label style="color: red">
+                        @errorLabel
+                    </label>
+                </div>
+            }
+            <div class="field">
+                <button class="loginbtn" @onclick="LoginAsync">Log in</button>
+            </div>
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        <div class="card">
+            <h3>Hello, @context.User.Identity.Name</h3>
+        </div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
-    private List<Supplier>? _suppliers;
-    private List<User>? _userMails;
-    private string msg = "";
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    
+    private string userName;
+    private string password;
+    private string role;
+    private string errorLabel;
 
-    protected override async Task OnInitializedAsync()
+    private async Task LoginAsync()
     {
-        await LoadSuppliers();
-    }
-
-    private async Task LoadSuppliers()
-    {
+        errorLabel = "";
         try
         {
-            _suppliers = await SupplierHttpClient.GetSuppliers();
-            _userMails = await UserHttpClient.GetUsersAsync();
+            await _authHttpClient.LoginAsync(userName, password);
+            var authenticationState = await authenticationStateTask;
+            var user = authenticationState.User;
+            if (user.IsInRole("woltSpecialist") || user.IsInRole("woltUser"))
+            {
+                _navMgr.NavigateTo("/SuppliersOvervview");
+            }
+            else if (user.IsInRole("woltSupplier"))
+            {
+                Supplier supplier = await _supplierHttpClient.GetSupplierByRepMail(user.Identity.Name);
+                _navMgr.NavigateTo($"/SupplierProfile/{supplier.Id}");
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to load Suppliers");
-            msg = "Failed to load data";
+            if (e.Message.Equals("User not found"))
+            {
+                errorLabel = "Contact your organization for login details."; 
+            }
+            Console.WriteLine(e);
+            errorLabel = $"Error: {e.Message}";
         }
-    }
-
-    private void AssessSupplier(Supplier supplier )
-    {
-        if (supplier.Categories == null || !supplier.Categories.Any())
-        {
-            navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Categories");
-        }
-        else
-        {
-            navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Risks");
-        }
-    }
-    private void AddSupplier()
-    {
-        navMgr.NavigateTo("/AddSupplier");
-    }
-    
-    private void OpenSupplierProfile(Supplier supplier )
-    {
-        navMgr.NavigateTo($"/SupplierProfile/"+supplier.Id);
     }
     
     
