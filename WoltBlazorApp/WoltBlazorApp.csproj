@@ -6,4 +6,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\HttpClients\HttpClients.csproj" />
+      <ProjectReference Include="..\InstantDataAccess\InstantDataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.14" />
+    </ItemGroup>
+
 </Project>

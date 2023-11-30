@@ -1,0 +1,162 @@
+@page "/AssessSupplier/{SupplierId}/Categories"
+@using Domain.Model
+@using HttpClients.Interfaces
+@using Domain.DTO
+@inject ISupplierHttpClient _supplierHttpClient
+@inject ISurveyHttpClient _surveyHttpClient
+@inject NavigationManager navMgr
+<h3>Assess Product Categories</h3>
+<div class="card-container">
+    @if (supplier == null)
+    {
+        <p> Loading... </p>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-title">
+                <h6>Supplier Products: @string.Join(", ", supplier.SuppliedProducts)</h6>
+            </div>
+            <div class="card-body">
+                    <div class="card">
+                        <div class="card-title">
+                            <h6>Product: @supplier.SuppliedProducts[currentProduct]</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Product Category</th>
+                                    <th>Select Relevant</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (RiskCategory category in _allCategories)
+                                {
+                                    <tr>
+                                        <td>@category.CategoryName</td>
+                                        <td>
+                                            @if (selectedCategories.FirstOrDefault(c => c.Equals(category)) == null)
+                                            {
+                                                <button @onclick="() => SelectCategory(category)">
+                                                    Select
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button @onclick="() => SelectCategory(category)">
+                                                    Selected
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card-footer">
+                            <button @onclick="NextProduct" >
+                                @btntext
+                            </button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Cascading parameter
+    [Parameter]
+    public string SupplierId { get; set; }
+
+    Supplier? supplier;
+    List<RiskCategory> _allCategories;
+    List<int> summarizedCategories;
+    List<RiskCategory> selectedCategories;
+    int currentProduct;
+    bool hasMoreProducts = false;
+    string btntext = "Next Product";
+
+    protected override async Task OnInitializedAsync()
+    {
+        hasMoreProducts = true;
+        selectedCategories = new List<RiskCategory>();
+        summarizedCategories = new List<int>();
+        await LoadSupplier();
+    }
+
+    private async Task LoadSupplier()
+    {
+        int SupplierIdInt = int.Parse(SupplierId);
+        supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+        _allCategories = await _surveyHttpClient.GetCategoriesAsync();
+        currentProduct = supplier.SuppliedProducts.IndexOf(supplier.SuppliedProducts.First());
+        if(supplier.SuppliedProducts.Count == 1)
+        {
+            hasMoreProducts = false;
+            btntext = "Next Page";
+        }
+        StateHasChanged(); // Ensure that the component is re-rendered after the data is loaded
+    }
+
+    void SelectCategory(RiskCategory category)
+    {
+        if (selectedCategories.FirstOrDefault(c => c.CategoryId == category.CategoryId) == null)
+        {
+            selectedCategories.Add(category);
+        }
+        else
+        {
+            selectedCategories.Remove(category);
+        }
+        StateHasChanged();
+    }
+
+    async Task NextProduct()
+    {
+        if (!hasMoreProducts)
+        {
+            await SaveCategories();
+            return;
+        }
+        if (supplier.SuppliedProducts.Count > currentProduct)
+        {
+            foreach (var selected in selectedCategories)
+            {
+                if (!summarizedCategories.Contains(selected.CategoryId))
+                {
+                    summarizedCategories.Add(selected.CategoryId);
+                }
+            }
+            selectedCategories.Clear();
+            currentProduct++;
+        }
+        if (supplier.SuppliedProducts.Count -1 == currentProduct)
+        {
+            btntext = "Next Page";
+            hasMoreProducts = false;
+        }
+        
+        StateHasChanged();
+    }
+
+    async Task SaveCategories()
+    {
+        foreach (var selected in selectedCategories)
+        {
+            if (!summarizedCategories.Contains(selected.CategoryId))
+            {
+                summarizedCategories.Add(selected.CategoryId);
+            }
+        }
+        UpdateSupplierDTO dto = new()
+        {
+            SupplierId = supplier.Id,
+            CategoriesId = summarizedCategories
+        };
+        await _supplierHttpClient.AddSupplierCategories(dto);
+        navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Risks");
+    }
+}

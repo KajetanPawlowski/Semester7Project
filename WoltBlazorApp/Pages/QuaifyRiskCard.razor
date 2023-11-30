@@ -1,0 +1,118 @@
+@using Domain.Model
+@using HttpClients.Interfaces
+@using Domain.DTO
+@inject ISurveyHttpClient _surveyHttpClient
+@inject ISupplierHttpClient _supplierHttpClient
+@page "/AssessSupplier/{SupplierId}/Risks/{RiskId}"
+
+<style>
+    /* Custom styling for the dropdown */
+    .custom-dropdown {
+        width: 100%; /* Set the width as needed */
+        max-width: 200px; /* Set the maximum width as needed */
+    }
+
+    .custom-option {
+        width: 100%; /* Set the width as needed */
+    }
+</style>
+
+
+<h6 class="card-title">Qualify Risk: @Display.Name</h6>
+@if (_riskAttributeTypes == null)
+{
+    <p>Loading attributes...</p>
+}
+else
+{
+    <div class="card">
+        
+        @foreach (var attributeType in _riskAttributeTypes)
+        {
+            <div class="card-body">
+                <h6>@attributeType</h6>
+                <select class="custom-dropdown" @onchange="e => UpdateSelectedAttributes(attributeType, e)">
+                    <option value="">Select an attribute</option>
+                    @foreach (RiskAttribute item in _riskAttributes.Where(a => a.AttributeType.Equals(attributeType)))
+                    {
+                        <option class="custom-option" value="@item.AttributeId">@item.Description</option>
+                    }
+                </select>
+            </div>
+        }
+        <div class="card-footer">
+            <button class="btn btn-primary" @onclick="SaveRisk">
+                Save Changes
+            </button>
+            <div>@errormsg</div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Risk Display { get; set; }
+    [Parameter]
+    public Supplier Supplier { get; set; }
+    [Parameter]
+    public Action UpdateSupplierNotify { get; set; }
+
+    private List<RiskAttribute>? _riskAttributes;
+    private List<RiskAttribute> selectedAttributes;
+    private List<string>? _riskAttributeTypes;
+    private string errormsg = "";
+
+    protected override async void OnInitialized()
+    {
+        await LoadRiskAttributes();
+        selectedAttributes = new List<RiskAttribute>();
+    }
+
+    async Task LoadRiskAttributes()
+    {
+        _riskAttributes = await _surveyHttpClient.GetRiskAttributesAsync();
+        _riskAttributeTypes = await _surveyHttpClient.GetRiskAttributesTypesAsync();
+        StateHasChanged();
+    }
+    void UpdateSelectedAttributes(string attributeType, ChangeEventArgs e)
+    {
+        string selectedAttributeId = e.Value?.ToString();
+        if (selectedAttributeId != null)
+        {
+            RiskAttribute selectedAttribute = _riskAttributes.FirstOrDefault(a => a.AttributeId == int.Parse(selectedAttributeId));
+            if (selectedAttribute != null)
+            {
+    // Add or update the selected attribute in the list
+                if (selectedAttributes.Contains(selectedAttribute))
+                {
+                    selectedAttributes.Remove(selectedAttribute);
+                }
+                else
+                {
+                    selectedAttributes.Add(selectedAttribute);
+                }
+            }
+        }
+    }
+
+    async Task SaveRisk()
+    {
+        Display.RiskAttributes = selectedAttributes;
+        UpdateSupplierDTO dto = new()
+        {
+            SupplierId = Supplier.Id,
+            Risks = new List<Risk>()
+        };
+        dto.Risks.Add(Display);
+        try
+        {
+            await _supplierHttpClient.UpdateSupplierRisks(dto);
+            UpdateSupplierNotify.Invoke();
+
+        }
+        catch (Exception e)
+        {
+            errormsg = "Select All attributes!";
+        }
+    }
+}

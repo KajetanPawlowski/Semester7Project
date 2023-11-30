@@ -1,0 +1,79 @@
+﻿@page "/SupplierProfile/{SupplierId}"
+@using HttpClients.Interfaces
+@using Domain.Model
+@using HttpClients.Implementations
+@inject ISupplierHttpClient _supplierHttpClient
+
+@inject NavigationManager navMgr
+
+<PageTitle>Supplier Profile</PageTitle>
+<h3>Surveys</h3>
+@if (supplier == null || _surveys == null)
+{
+    <p>Load supplier data...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Survey Name</th>
+            <th>Creation Time</th>
+            <th>Answered Time</th>
+            <th>Answer Survey</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in _surveys)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.CreationTime</td>
+                @*<td>@item.AnsweredTime</td>*@
+                <td><button class="feed-buttons answerSurveyBtn" @onclick="AnswerSurvey">Answer Survey</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}    
+
+
+@code {
+    // Cascading parameter
+    [Parameter]
+    public string SupplierId { get; set; }
+
+    private Supplier? supplier;
+    private List<Survey>?  _surveys;
+    private string msg = "";
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        try
+        {
+            int SupplierIdInt = int.Parse(SupplierId);
+            supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
+            _surveys = await _supplierHttpClient.GetSurveys(SupplierIdInt);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task AnswerSurvey()
+    {
+        navMgr.NavigateTo("/AnswerSurvey");
+    }
+
+    
+
+}

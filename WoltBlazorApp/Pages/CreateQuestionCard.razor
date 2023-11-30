@@ -1,0 +1,75 @@
+﻿@using Domain.DTO
+@using Domain.Model
+<div class="card">
+    <div class="card-body" >
+    <div>
+        <h6>Create Question: @Category.CategoryName <input type="text" class="form-control" @bind="newBody" placeholder="What is the question"/></h6> 
+    </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control"@bind="newAnswer" placeholder="Add new answer"/>
+            <button class="btn btn-success" @onclick="AddAnswer"> Add </button>
+        </div>
+        <div>
+            @if (toCreate.AllAnswers.Count > 0)
+            {
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Answers</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in toCreate.AllAnswers)
+                    {
+                        <tr>
+                            <td>@item</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        </div>    
+        <div class="card-footer">
+            <button @onclick="CreateQuestion">
+                Add Question
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Action<CreateQuestionDTO> CreateQuestionCallback { get; set; }
+    
+    [Parameter]
+    public RiskCategory Category { get; set; }
+    
+   
+
+    private CreateQuestionDTO toCreate;
+    private string newBody = "";
+    private string newAnswer = "";
+
+    protected override void OnInitialized()
+    {
+        toCreate = new CreateQuestionDTO();
+        toCreate.AllAnswers ??= new List<string>();
+        toCreate.RiskCategory = Category;
+      
+    }
+    private void AddAnswer()
+    {
+        if (!string.IsNullOrEmpty(newAnswer))
+        {
+            toCreate.AllAnswers.Add(newAnswer);
+            newAnswer = "";
+        }
+    }
+
+    private void CreateQuestion()
+    {
+        toCreate.Body = newBody;
+        CreateQuestionCallback?.Invoke(toCreate);
+    }
+
+}
