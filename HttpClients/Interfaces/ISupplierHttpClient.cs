@@ -11,6 +11,9 @@ public interface ISupplierHttpClient
     
     //Using Supplier Logic
     public Task<Supplier> GetSupplierById(int supplierId);
+    public Task<List<Country>> GetAllCountries();
+    public Task<List<Country>> GetCountriesByCCode(string cCode);
+    public Task<List<Country>> GetCountriesByRegion(string region);
     public Task<List<Survey>> GetSurveys(int supplierId);
     public Task<Supplier> CreateSupplier(SupplierCreationDTO dto);
     public Task<Supplier> AddSupplierCategories(UpdateSupplierDTO dto);
@@ -24,5 +27,5 @@ public interface ISupplierHttpClient
     //Using Several
     
     //Not Implemented
-    public Task<Survey> ResendSurvey(int surveyId);
+    public void NotifySupplier (int surveyId);
 }

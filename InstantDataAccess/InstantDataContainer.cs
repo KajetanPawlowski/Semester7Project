@@ -12,6 +12,7 @@ public class InstantDataContainer
     public IList<Question> Questions { get; set; }
     public IList<RiskAttribute> RiskAttributes { get; set; }
     public IList<RiskCategory> RiskCategories { get; set; }
+    public IList<Country> Countries { get; set; }
 
     
 }

@@ -24,10 +24,23 @@
         <table class="table table-striped">
             <thead>
             <tr>
+
+                <td>@item.CompanyName</td>
+                <td>@item.CountryCode</td>
+                <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
+                <td>
+                    <button @onclick="() => AssessSupplier(item)">
+                        Assess Supplier
+                    </button>
+                    <button @onclick="() => OpenSupplierProfile(item)">
+                        Open Supplier Profile
+                    </button>
+                </td>
+            
                 <th>Company Name</th>
                 <th>Country</th>
                 <th>Representative Mail</th>
-                <th></th>
+                <th></t
             </tr>
             </thead>
             <tbody>

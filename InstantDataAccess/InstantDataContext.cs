@@ -71,6 +71,15 @@ public class InstantDataContext
             return dataContainer!.Users;
         }
     }
+    public IList<Country> Countries
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.Countries;
+            
+        }
+    }
 
     private void LoadData()
     {
@@ -86,7 +95,8 @@ public class InstantDataContext
                 Users = new List<User>(),
                 Questions = new List<Question>(),
                 RiskAttributes = new List<RiskAttribute>(),
-                RiskCategories = new List<RiskCategory>()
+                RiskCategories = new List<RiskCategory>(),
+                Countries = new List<Country>()
             };
             return;
         }

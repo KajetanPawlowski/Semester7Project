@@ -32,6 +32,54 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers.First();
     }
 
+    public async Task<List<Country>> GetAllCountries()
+    {
+        HttpResponseMessage response = await client.GetAsync("/Supplier/Country");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Country> countries = JsonSerializer.Deserialize<List<Country>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return countries;
+    }
+
+    public async Task<List<Country>> GetCountriesByCCode(string cCode)
+    {
+        HttpResponseMessage response = await client.GetAsync("/Supplier/Country?cCode="+cCode);
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Country> countries = JsonSerializer.Deserialize<List<Country>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return countries;
+    }
+
+    public async Task<List<Country>> GetCountriesByRegion(string region)
+    {
+        HttpResponseMessage response = await client.GetAsync("/Supplier/Country?region="+region);
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response +"");
+        }
+
+        List<Country> countries = JsonSerializer.Deserialize<List<Country>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return countries; 
+    }
+
     public async Task<List<Survey>> GetSurveys(int supplierId)
     {
         try
@@ -148,9 +196,9 @@ public class SupplierHttpClient : ISupplierHttpClient
         return suppliers.First();
     }
 
-
-    public Task<Survey> ResendSurvey(int surveyId)
+    public void NotifySupplier(int surveyId)
     {
         throw new NotImplementedException();
     }
+    
 }
