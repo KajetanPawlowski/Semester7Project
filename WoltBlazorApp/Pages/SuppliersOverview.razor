@@ -35,7 +35,7 @@
             {
                 <tr>
                     <td>@item.CompanyName</td>
-                    <td>@item.Country</td>
+                    <td>@item.CountryCode</td>
                     <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
                     <td>
                         <button class="btn btn-success me-2" @onclick="() => AssessSupplier(item)">

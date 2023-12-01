@@ -11,6 +11,7 @@
 <div class="container-fluid page-container">
     @if (supplier != null)
     {
+
         <div class="page-header assessSupplierPage">
             <h3>Assess Risks</h3>
             <div class="supplier-details assessSupplierPage">
@@ -19,6 +20,9 @@
                 <p><strong>Headcount:</strong> @supplier.Headcount people</p>
             </div>
         </div>
+
+        <h3>Assess Risks. Suppler: @supplier.CompanyName. Country: @supplier.CountryCode. Size: @supplier.Headcount people.</h3>
+
     }
     @if (supplier == null)
     {
