@@ -10,6 +10,7 @@ body {
     background-position: center; 
     background-repeat: no-repeat;
     background-color: #00C2E8;
+    font-family: "Roboto Thin", sans-serif;
 }
 /* Wolt Logo on top of page */
 .logo-img {
@@ -25,7 +26,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,7 +42,16 @@ body {
 }
 h1 {
     font-size: 2rem;
+    color: #333;
+    font-family: "Roboto Thin", sans-serif;
+}
+h3{
+    font-size: 2rem;
     color: white;
+    font-family: "Roboto Thin", sans-serif;
+}
+p {
+    margin-bottom: 10px;
     font-family: "Roboto Thin", sans-serif;
 }
 
@@ -60,7 +70,7 @@ h1 {
     padding: 8px;
     box-sizing: border-box;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .field.logInPage label[style="color: red"] {
@@ -73,7 +83,7 @@ h1 {
     background-color: purple;
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -91,7 +101,7 @@ h1 {
     margin-right: 10px;
 }
 
-/*supplier overview styling*/
+/*Supplier overview table styling*/
 .container {
     max-width: 800px;
     margin: auto;
@@ -100,7 +110,7 @@ h1 {
 .table {
     width: 100%;
     margin-top: 20px;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -112,53 +122,159 @@ h1 {
 
 .table th {
     background-color: #fff;
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid snow;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
+.table-striped tbody tr:nth-of-type(odd),
+.table tbody tr:nth-of-type(odd) {
+    background-color: #ffffff;
+}
+
+.table-striped tbody tr:nth-of-type(even),
+.table tbody tr:nth-of-type(even) {
+    background-color: #fff;
 }
 
 .btn {
     padding: 8px 16px;
     font-size: 1rem;
     cursor: pointer;
+    border-radius: 40px;
+    overflow: hidden;
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #00C2E8;
     color: #fff;
     border: none;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #009be8;
 }
 
 .btn-success {
-    background-color: #28a745;
+    background-color: #00e89a;
     color: #fff;
     border: none;
 }
 
 .btn-success:hover {
-    background-color: #218838;
+    background-color: #00e8c1;
 }
 
 .btn-info {
-    background-color: #17a2b8;
+    background-color: #00C2E8;
     color: #fff;
     border: none;
 }
 
 .btn-info:hover {
-    background-color: #0056b3;
+    background-color: #009be8;
 }
 
 .addSupplierBtn {
     margin-top: 20px;
 }
 
+
+
+/*Assess supplier risk + categories table extra styling*/
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-radius: 40px;
+    overflow: hidden;
+}
+
+.card.assessSupplier {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-body.assessSupplier {
+    padding: 20px;
+}
+
+.card h6 {
+    color: #333;
+    font-family: "Roboto Thin", sans-serif;
+}
+
+.card-footer.assessSupplier {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    overflow: hidden;
+}
+
+.card-footer.assessSupplier button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    background-color: #00C2E8; 
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-footer.assessSupplier button:hover {
+    background-color: #009be8;
+}
+
+/* Assess Supplier - company info to look nice */
+.page-container {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto; 
+    max-width: 98%;
+}
+
+.page-header.assessSupplierPage {
+    margin-bottom: 20px;
+}
+
+.page-header.assessSupplierPage h3 {
+    font-size: 2rem;
+    color: #333;
+    font-family: "Roboto Thin", sans-serif;
+}
+
+.supplier-details.assessSupplierPage {
+    margin-top: 10px;
+}
+
+.supplier-details.assessSupplierPage p {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    font-family: "Roboto Thin", sans-serif;
+}
+
+.message-card.assessSupplierPage {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+
+
+
+
+/* Additional styling for responsiveness */
 @media (max-width: 768px) {
     .container {
         max-width: 100%;

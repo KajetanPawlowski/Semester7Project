@@ -8,10 +8,17 @@
 @attribute [Authorize(Policy = "isWoltSpecialist")]
 
 
-<div class="container-fluid">
+<div class="container-fluid page-container">
     @if (supplier != null)
     {
-        <h3>Assess Risks. Suppler: @supplier.CompanyName. Country: @supplier.Country. Size: @supplier.Headcount people.</h3>
+        <div class="page-header assessSupplierPage">
+            <h3>Assess Risks</h3>
+            <div class="supplier-details assessSupplierPage">
+                <p><strong>Supplier:</strong> @supplier.CompanyName</p>
+                <p><strong>Country:</strong> @supplier.Country</p>
+                <p><strong>Headcount:</strong> @supplier.Headcount people</p>
+            </div>
+        </div>
     }
     @if (supplier == null)
     {
@@ -19,8 +26,10 @@
     }
     else if(!hasCategories)
     {
-        <p>Please add categories to the supplier products</p>
-        <button class="btn btn-secondary" @onclick="GoBack">Go back</button>
+        <div class="message-card assessSupplierPage">
+            <p>Please add categories to the supplier products</p>
+            <button class="btn btn-secondary" @onclick="GoBack">Go back</button>
+        </div>
     }
     else
     {
@@ -36,8 +45,8 @@
                 }
                 else
                 {
-                    <div class="card">
-                        <div class="card-body">
+                    <div class="card assessSupplier">
+                        <div class="card-body assessSupplier">
                             <h6>Category: @selectedCategory.CategoryName</h6>
                             @if (!isQualifingRisk)
                             {
@@ -48,7 +57,7 @@
                                 <QuaifyRiskCard Display="@risks[selectedRiskIndex]" Supplier="@supplier" UpdateSupplierNotify="async () => await UpdateSupplier()"/>
                             }
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer assessSupplier">
                             @if(CheckIfFinished())
                             {
                                 <button @onclick="NavigateToNextPage">
