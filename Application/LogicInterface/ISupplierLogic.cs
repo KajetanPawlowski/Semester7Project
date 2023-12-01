@@ -12,5 +12,8 @@ public interface ISupplierLogic
     Task<List<Survey>> GetSurveysAsync(int supplierId);
     Task<Supplier> CreateSupplierAsync(SupplierCreationDTO dto);
     Task<List<Supplier>> GetSuppliersAsync();
-    
+    Task<Country> GetCountryByCCode(string cCode);
+    Task<List<Country>> GetCountriesByRegion(string countryRegion);
+    Task<List<Country>> GetAllCountries();
+
 }

@@ -29,12 +29,14 @@ builder.Services.AddScoped<IRiskCategoryDAO, RiskCategoryInstantDAO>();
 builder.Services.AddScoped<IRiskDAO, RiskInstantDAO>();
 builder.Services.AddScoped<IUserDAO, UserInstantDao>();
 builder.Services.AddScoped<ISurveyDAO, SurveyInstantDAO>();
+builder.Services.AddScoped<ICountryDAO, CountryInstantDAO>();
 
 //Add Logic
 builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
 builder.Services.AddScoped<ISurveyLogic, SurveyLogic>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
 builder.Services.AddScoped<IRiskLogic, RiskLogic>();
+
 
 AuthorizationPolicies.AddPolicies(builder.Services);
 //Authorisation Stuff
