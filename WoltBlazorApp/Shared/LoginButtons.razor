@@ -5,23 +5,24 @@
 
 <AuthorizeView Policy="isOnlyWoltUser">
     <div class="position-fixed bottom-0 end-0 p-3">
-        <img src="img/SadYuhoPageNotFound.psd" class="img-fluid icon" @onclick="Logout" alt="Sad Yuho Page Not Found">
+        <img src="img/SadYuhoPageNotFound.psd" class="img-fluid profile icon" @onclick="Logout" alt="Sad Yuho Page Not Found">
     </div>
 </AuthorizeView>
 <AuthorizeView Policy="isWoltSpecialist">
-    <div class="position-fixed bottom-0 end-0 p-3">
-        <img src="img/WoltSpecialist.png" class="img-fluid icon" @onclick="Logout" alt="Wolt Specialist">
+    <div class="position-fixed top-0 end-0 p-3 d-flex align-items-center">
+        <img src="img/WoltSpecialist.png" class="img-fluid profile icon"  alt="Wolt Specialist">
+        <span class="welcome-span mb-2" @onclick="Logout">Log out</span>
     </div>
 </AuthorizeView>
 <AuthorizeView Policy="isWoltSupplier">
     <div class="position-fixed bottom-0 end-0 p-3">
-        <img src="img/WoltSupplier.png" class="img-fluid icon" @onclick="Logout" alt="Wolt Supplier">
+        <img src="img/WoltSupplier.png" class="img-fluid profile icon" @onclick="Logout" alt="Wolt Supplier">
     </div>
 </AuthorizeView>
 
 <AuthorizeView>
     <NotAuthorized>
-        <div class="position-fixed bottom-0 end-0 p-3">
+        <div class="position-fixed top-0 end-0 p-3">
             <span class="welcome-span mb-2" @onclick="Login">Log in / Sign up :)</span>
         </div>
     </NotAuthorized>
