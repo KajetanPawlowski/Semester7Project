@@ -17,6 +17,8 @@ public class AuthorizationPolicies
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, specialistRoles));
             options.AddPolicy("isWoltSpecialist", a =>
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "woltSpecialist"));
+            options.AddPolicy("isOnlyWoltUser", a =>
+                a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "woltUser"));
             options.AddPolicy("isAdmin", a =>
                 a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, "admin"));
         });
