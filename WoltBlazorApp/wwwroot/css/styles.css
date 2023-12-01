@@ -1,3 +1,4 @@
+
 html, body {
     height: 100%;
     margin: 0;
@@ -143,14 +144,27 @@ p {
     overflow: hidden;
 }
 
-.btn-primary {
+.btn-primary, .seeSurveyBtn {
+    padding: 8px 16px;
     background-color: #00C2E8;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    overflow: hidden;
+}
+
+.answerSurveyBtn{
+    background-color: #00e89a;
     color: #fff;
     border: none;
 }
 
-.btn-primary:hover {
+.seeSurveyBtn:hover, .btn-primary:hover {
     background-color: #009be8;
+}
+
+.answerSurveyBtn:hover{
+    background-color: #00e8c1;
 }
 
 .btn-success {
@@ -192,16 +206,14 @@ p {
     overflow: hidden;
 }
 
-.card.assessSupplier {
+.sidebarRisk, .list-group, .card-body.assessSupplier {
+    background-color: #fff;
     margin-bottom: 20px;
-    border-radius: 8px;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.card-body.assessSupplier {
-    padding: 20px;
-}
 
 .card h6 {
     color: #333;
@@ -210,10 +222,9 @@ p {
 
 .card-footer.assessSupplier {
     padding: 10px;
-    background-color: #f8f9fa;
+    background-color: #fff;
     border-top: 1px solid #dee2e6;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-radius: 20px;
     overflow: hidden;
 }
 
@@ -228,9 +239,27 @@ p {
     cursor: pointer;
 }
 
+.assessSupplier button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    background-color: #00C2E8;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
 .card-footer.assessSupplier button:hover {
     background-color: #009be8;
 }
+
+.backBox{
+    background-color: rgba(255, 255, 255, 0.0);
+    border: none;
+}
+
+
 
 /* Assess Supplier - company info to look nice */
 .page-container {
@@ -280,3 +309,4 @@ p {
         max-width: 100%;
     }
 }
+

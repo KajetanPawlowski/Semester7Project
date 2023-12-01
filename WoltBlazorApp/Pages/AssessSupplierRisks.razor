@@ -34,7 +34,7 @@
     else
     {
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 backBox">
                 <AssessSupplierRiskSidebar Categories="supplier.Categories" Risks="risks" AddRiskNotify="AddRisk" SelectRiskNotify="SelectRisk"/>
             </div>
             <div class="col-md-9">
@@ -45,8 +45,8 @@
                 }
                 else
                 {
-                    <div class="card assessSupplier">
-                        <div class="card-body assessSupplier">
+                    <div class="card backBox ">
+                        <div class="card-body sidebarRisk">
                             <h6>Category: @selectedCategory.CategoryName</h6>
                             @if (!isQualifingRisk)
                             {

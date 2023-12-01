@@ -43,11 +43,18 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-    
+
     private string userName;
     private string password;
     private string role;
     private string errorLabel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userName = "spec";
+        password = "pass";
+        await LoginAsync();
+    }
 
     private async Task LoginAsync()
     {
