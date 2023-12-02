@@ -51,7 +51,7 @@ public class QuestionInstantDAO : IQuestionDAO
     public Task<IEnumerable<Question>> GetByAttribute(RiskAttribute attribute)
     {
         IEnumerable<Question> questions = context.Questions
-            .Where(q => q.RelatedRisk.RiskAttributes.Equals(attribute))
+            .Where(q => q.RelevantRisk.RiskAttributes.Where(a => a.AttributeId == attribute.AttributeId)!=null)
             .ToList();
 
         return Task.FromResult(questions);

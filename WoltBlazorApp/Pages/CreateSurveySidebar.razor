@@ -7,19 +7,19 @@
                         {
                             <li class="list-group-item">
                                 <h5>@category.CategoryName</h5>
-                                @foreach (var question in Questions.Where(q => q.RiskCategory.CategoryId == category.CategoryId))
+                                @foreach (var risk in Risks.Where(r => r.Category.CategoryId == category.CategoryId))
                                 {
-                                    <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
-                                        - @question.Body
-                                        @if (question.Body != null)
-                                        {
-                                            <p style="float: right"> New Question Added </p>
-                                        }
+                                    <h6>@risk.Name</h6>
+                                    @foreach (var question in Questions.Where(q => q.RelatedRisk.Id == risk.Id))
+                                    {
+                                        <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
+                                            - @question.Body
+                                        </div>
+                                    }
+                                    <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(risk)">
+                                        + Add Question
                                     </div>
                                 }
-                                <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(category)">
-                                    + Add Question
-                                </div>
                             </li>
                         }
                     </ul>
@@ -29,11 +29,13 @@
     [Parameter]
     public List<RiskCategory> Categories { get; set; }
     [Parameter]
+    public List<Risk> Risks { get; set; }
+    [Parameter]
     public List<CreateQuestionDTO> Questions { get; set; }
     [Parameter]
     public EventCallback<CreateQuestionDTO> SelectQuestionNotify { get; set; }
     [Parameter]
-    public EventCallback<RiskCategory> AddQuestionNotify { get; set; }
+    public EventCallback<Risk> AddQuestionNotify { get; set; }
     
 
     void SelectQuestion(CreateQuestionDTO currentQuestion)
@@ -41,8 +43,8 @@
         SelectQuestionNotify.InvokeAsync(currentQuestion);
     }
 
-    void OpenAddQuestion(RiskCategory category)
+    void OpenAddQuestion(Risk risk)
     {
-        AddQuestionNotify.InvokeAsync(category);
+        AddQuestionNotify.InvokeAsync(risk);
     }
 }
