@@ -8,6 +8,19 @@
 @inject NavigationManager navMgr
 @attribute [Authorize(Policy = "isWoltUser")]
 
+<style>
+ 
+    .custom-dropdown {
+        width: 100%;
+        max-width: 200px; 
+    }
+
+    .custom-option {
+        width: 100%; 
+    }
+</style>
+
+
 <div class="card-container">
     <h1>Add Supplier</h1>
     <div class="card">
@@ -15,9 +28,15 @@
             <h6>Supplier Details:</h6>
         </div>
         <div class="card-body" style="@StyleDisplay[0]">
-            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName"/>
-            <input type="text" placeholder="Country Code" @bind="toCreate.CountryCode"/>
-            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount"/>
+            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
+            <select class="custom-dropdown" @bind="toCreate.CountryCode">
+                <option>Select a country</option>
+                @foreach (Country item in _countries)
+                {
+                    <option class="custom-option" value="@item.CCode">@item.CountryName</option>
+                }
+            </select>
+            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
         </div>
         <div class="card-footer" style="@StyleDisplay[0]">
             <button @onclick="() => ShowNext(0)" class="btn">
@@ -48,6 +67,7 @@
                             <td>@user.FullName</td>
                             <td>@user.Mail</td>
                             <td>
+
                                 <button class="btn" @onclick="() => SelectUser(user)">
                                     Select User
                                 </button>
@@ -137,6 +157,8 @@
     // Shuffling effect
     private string[] StyleDisplay = new string[] { "display : block", "display : none", "display : none" };
 
+    private List<Country> _countries = new List<Country>();
+
     private SupplierCreationDTO toCreate = new SupplierCreationDTO();
     private List<User> Users = new List<User>();
     private bool UserExist = true;
@@ -196,12 +218,18 @@
     protected override async void OnInitialized()
     {
         await LoadUsers();
+        await LoadCountries();
     }
 
     private async Task LoadUsers()
     {
         Users = await _userHttpClient.GetUsersAsync();
         toCreate.SuppliedProducts ??= new List<string>();
+    }
+    
+    async Task LoadCountries()
+    {
+        _countries = await _supplierHttpClient.GetAllCountries();
     }
 
 }
