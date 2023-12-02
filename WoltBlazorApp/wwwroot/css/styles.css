@@ -170,10 +170,14 @@ p {
     background-color: #00e89a;
     color: #fff;
     border: none;
+    border-radius: 40px;
+    overflow: hidden;
 }
 
 .btn-success:hover {
     background-color: #00e8c1;
+    border-radius: 40px;
+    overflow: hidden;
 }
 
 .btn-info {
