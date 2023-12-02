@@ -8,16 +8,23 @@
 @inject NavigationManager navMgr
 @attribute [Authorize(Policy = "isWoltUser")]
 
-<style>
+<style> /*style for input section + dropdown*/
  
-    .custom-dropdown {
+     .custom-input, .custom-dropdown {
         width: 100%;
         max-width: 200px; 
+        height: 30px;
+        border-radius: 8px;
+        overflow: hidden;
+        font-family: "Roboto Thin", sans-serif;
+        border: 1px solid lightgrey;
     }
-
+   
     .custom-option {
         width: 100%; 
     }
+    
+    
 </style>
 
 
@@ -28,7 +35,7 @@
             <h6>Supplier Details:</h6>
         </div>
         <div class="card-body" style="@StyleDisplay[0]">
-            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
+            <input class="custom-input" type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
             <select class="custom-dropdown" @bind="toCreate.CountryCode">
                 <option>Select a country</option>
                 @foreach (Country item in _countries)
@@ -36,7 +43,7 @@
                     <option class="custom-option" value="@item.CCode">@item.CountryName</option>
                 }
             </select>
-            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
+            <input class="custom-input" type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
         </div>
         <div class="card-footer" style="@StyleDisplay[0]">
             <button @onclick="() => ShowNext(0)" class="btn">
@@ -91,8 +98,8 @@
                 <h6>New Representative:</h6>
             </div>
             <div class="card-body" style="@StyleDisplay[1]">
-                <input type="text" placeholder="Representative name" @bind="newUser.FullName"/>
-                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
+                <input class="custom-input" type="text" placeholder="Representative name" @bind="newUser.FullName"/>
+                <input class="custom-input" type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
                 <!-- Add other input fields for user details -->
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
@@ -109,10 +116,10 @@
         </div>
         <div class="card-body" style="@StyleDisplay[2]">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product"/>
-                <button class="btn btn-success" @onclick="AddProduct">
+                <input type="text" class="form-control custom-input" @bind="newProduct" placeholder="Add a new product"/>
+                <button class="btn-success" @onclick="AddProduct">
                     Add
-                </button>
+                </button> @*Alice cannot CSS this button :( *@
                 <table class="table">
                     <thead>
                     <tr>
