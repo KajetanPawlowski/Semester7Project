@@ -13,9 +13,10 @@ public class SupplierLogic : ISupplierLogic
     private readonly ISupplierDAO _supplierDao;
     private readonly ISurveyDAO _surveyDao;
     private readonly IRiskAttributeDAO _riskAttributeDao;
+    private readonly ICountryDAO _countryDao;
     
     public SupplierLogic(IUserDAO userDao, ISupplierDAO supplierDao, IRiskCategoryDAO riskCategoryDao, 
-        ISurveyDAO surveyDao,IRiskDAO riskDao, IRiskAttributeDAO attributeDao)
+        ISurveyDAO surveyDao,IRiskDAO riskDao, IRiskAttributeDAO attributeDao, ICountryDAO countryDao)
     {
         _userDao = userDao;
         _supplierDao = supplierDao;
@@ -23,6 +24,7 @@ public class SupplierLogic : ISupplierLogic
         _riskDao = riskDao;
         _surveyDao = surveyDao;
         _riskAttributeDao = attributeDao;
+        _countryDao = countryDao;
     }
     public async Task<Supplier> AssignNewRiskCategory(int supplierId, int categoryId)
     {
@@ -116,7 +118,7 @@ public class SupplierLogic : ISupplierLogic
             RepresentativeId = dto.RepresentativeId,
             SuppliedProducts = dto.SuppliedProducts,
             Headcount = dto.HeadCount,
-            Country = dto.Country,
+            CountryCode = dto.CountryCode,
             
             Categories = new List<RiskCategory>(),
             RelevantRisks = new List<Risk>()
@@ -135,11 +137,28 @@ public class SupplierLogic : ISupplierLogic
         try
         {
             await _userDao.GetByIdAsync(dto.RepresentativeId);
+            await _countryDao.GetByCCode(dto.CountryCode);
         }
         catch (Exception e)
         {
             Console.WriteLine("Representative not found");
         }
+    }
+
+    public async Task<Country> GetCountryByCCode(string cCode)
+    {
+        return await _countryDao.GetByCCode(cCode);
+        
+    }
+
+    public async Task<List<Country>> GetCountriesByRegion(string countryRegion)
+    {
+        return await _countryDao.GetByRegion(countryRegion);
+    }
+
+    public async Task<List<Country>> GetAllCountries()
+    {
+        return await _countryDao.GetAllAsync();
     }
     
     

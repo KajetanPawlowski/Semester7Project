@@ -34,7 +34,7 @@
     <Authorized>
         <div class="card logInPage">
             <h3>Hello, @context.User.Identity.Name</h3>
-            <img src="img/WoltSupplier.png"/>
+            @*<img src="img/WoltUser.png"/>*@
         </div>
     </Authorized>
 </AuthorizeView>
@@ -43,11 +43,12 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-    
+
     private string userName;
     private string password;
     private string role;
     private string errorLabel;
+    
 
     private async Task LoginAsync()
     {

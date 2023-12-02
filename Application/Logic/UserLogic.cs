@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Mail;
 using Application.DAOInterface;
 using Application.LogicInterface;
 using Domain.DTO;
@@ -65,6 +67,46 @@ public class UserLogic : IUserLogic
     {
         return _userDao.GetAllAsync();
     }
+
+    /*public async Task<User> NotifySupplier(NotifySupplierDTO dto)
+    {
+        User user = await _userDao.GetByIdAsync(dto.userId);
+        // Sender's email address and credentials
+        string senderEmail = "woltsusteam7@gmail.com";
+        string senderPassword = "Semester7Project!";
+
+        string subject = "Login Information";
+        string body = $"Dear {user.FullName},\n\nHere is your login information:\n\n" +
+                      $"Username: {user.Mail}\n" +
+                      $"Password: {user.Password}\n\n" +
+                      $"Click the link below to log in:\n" +
+                      "http://localhost:5145/";
+
+        // Create and configure the email message
+        MailMessage mailMessage = new MailMessage(senderEmail, user.Mail, subject, body);
+        mailMessage.IsBodyHtml = false; // Set to true if you want to use HTML in the email body
+
+        // Create and configure the SMTP client
+        SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
+        smtpClient.Port = 25;
+        smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
+        smtpClient.UseDefaultCredentials = false;
+        smtpClient.EnableSsl = true;
+
+        try
+        {
+            // Send the email
+            smtpClient.Send(mailMessage);
+            Console.WriteLine("Email sent successfully!");
+        }
+        catch (Exception ex)
+        {
+          
+            throw new Exception("Error sending email: ");
+        }
+
+        return user;
+    }*/
 
     private static void ValidateRegistrationData(RegisterUserDTO userToCreate)
     {

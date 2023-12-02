@@ -7,7 +7,7 @@
 @attribute [Authorize]
 <PageTitle>Home page- Wolt</PageTitle>
 
-<div class="container mt-4">
+<div class="container mt-4 page-container">
     <h1 class="mb-4">List of Suppliers</h1>
 
     @if (_suppliers == null)
@@ -35,7 +35,7 @@
             {
                 <tr>
                     <td>@item.CompanyName</td>
-                    <td>@item.Country</td>
+                    <td>@item.CountryCode</td>
                     <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
                     <td>
                         <button class="btn btn-success me-2" @onclick="() => AssessSupplier(item)">

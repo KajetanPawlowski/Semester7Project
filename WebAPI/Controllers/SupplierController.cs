@@ -92,4 +92,33 @@ public class SupplierController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    //Get Countries by CountryCode or Region
+    [HttpGet("Country")]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<Country>>> GetCountriesAsync([FromQuery] string? cCode, string? region)
+    {
+        try
+        {
+            List<Country> countries = new List<Country>();
+            if (cCode != null)
+            {
+               countries.Add(await _supplierLogic.GetCountryByCCode(cCode));
+            }
+            else if (region != null)
+            {
+               countries = await _supplierLogic.GetCountriesByRegion(region);
+            }
+            else
+            {
+               countries = await _supplierLogic.GetAllCountries();
+            }
+            return Ok(countries);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }
