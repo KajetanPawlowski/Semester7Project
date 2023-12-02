@@ -37,8 +37,31 @@ public class SurveyLogic : ISurveyLogic
         {
             relevantQuestions.AddRange(await _questionDao.GetByCategory(category));
         }
+        List<Question> attributeMatch = new List<Question>();
+        foreach (var relevantRisk in supplier.RelevantRisks)
+        {
+            foreach (var riskMapping in relevantRisk.RiskAttributes.Where(a => a.AttributeType.Equals("Risk types (mapping)")))
+            {
+                attributeMatch.AddRange(relevantQuestions.Where(q => GetRiskMappingAttribute(q).AttributeId == riskMapping.AttributeId));
+            }
 
-        return relevantQuestions;
+            foreach (var impactedGroup in relevantRisk.RiskAttributes.Where(a => a.AttributeType.Equals("Impacted group - most affected group")))
+            {
+                attributeMatch.AddRange(relevantQuestions.Where(q => GetImpactedGroupAttribute(q).AttributeId == impactedGroup.AttributeId));
+            }
+        }
+
+        return attributeMatch;
+    }
+
+    private RiskAttribute GetRiskMappingAttribute(Question question)
+    {
+        return question.RelevantRisk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Risk types (mapping)"));
+    }
+
+    private RiskAttribute GetImpactedGroupAttribute(Question question)
+    {
+        return question.RelevantRisk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Impacted group - most affected group"));
     }
 
     public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)
@@ -80,7 +103,9 @@ public class SurveyLogic : ISurveyLogic
             Body = dto.Body,
             AllAnswers = dto.AllAnswers,
             Category = dto.RiskCategory,
-
+            RelevantRisk = dto.RelatedRisk,
+            CCode = dto.CCode,
+            RelevantCompanySize = dto.CompanySize
         };
 
         return await _questionDao.CreateAsync(toCreate);
