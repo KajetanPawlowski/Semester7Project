@@ -48,13 +48,7 @@
     private string password;
     private string role;
     private string errorLabel;
-
-    protected override async Task OnInitializedAsync()
-    {
-        userName = "spec";
-        password = "pass";
-        await LoginAsync();
-    }
+    
 
     private async Task LoginAsync()
     {
