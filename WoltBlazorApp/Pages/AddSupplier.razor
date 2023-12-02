@@ -7,20 +7,20 @@
 @inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
 @attribute [Authorize(Policy = "isWoltUser")]
-<h3>Add Supplier</h3>
 
 <div class="card-container">
+    <h1>Add Supplier</h1>
     <div class="card">
         <div class="card-title">
             <h6>Supplier Details:</h6>
         </div>
         <div class="card-body" style="@StyleDisplay[0]">
-            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
-            <input type="text" placeholder="Country Code" @bind="toCreate.CountryCode" />
-            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
+            <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName"/>
+            <input type="text" placeholder="Country Code" @bind="toCreate.CountryCode"/>
+            <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount"/>
         </div>
         <div class="card-footer" style="@StyleDisplay[0]">
-            <button @onclick="() => ShowNext(0)">
+            <button @onclick="() => ShowNext(0)" class="btn">
                 Next
             </button>
         </div>
@@ -35,30 +35,30 @@
             <div class="card-body" style="@StyleDisplay[1]">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Representative Name</th>
-                            <th>Rep. Mail</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Representative Name</th>
+                        <th>Rep. Mail</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Users)
-                        {
-                            <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Mail</td>
-                                <td>
-                                    <button @onclick="() => SelectUser(user)">
-                                        Select User
-                                    </button>
-                                </td>
-                            </tr>
-                        }
+                    @foreach (var user in Users)
+                    {
+                        <tr>
+                            <td>@user.FullName</td>
+                            <td>@user.Mail</td>
+                            <td>
+                                <button class="btn" @onclick="() => SelectUser(user)">
+                                    Select User
+                                </button>
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="ShowAddUser">
+                <button @onclick="ShowAddUser" class="btn">
                     Add User
                 </button>
             </div>
@@ -71,12 +71,12 @@
                 <h6>New Representative:</h6>
             </div>
             <div class="card-body" style="@StyleDisplay[1]">
-                <input type="text" placeholder="Representative name" @bind="newUser.FullName" />
-                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail" />
+                <input type="text" placeholder="Representative name" @bind="newUser.FullName"/>
+                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
                 <!-- Add other input fields for user details -->
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="SaveNewUser">
+                <button class="btn" @onclick="SaveNewUser">
                     Save User
                 </button>
             </div>
@@ -89,44 +89,44 @@
         </div>
         <div class="card-body" style="@StyleDisplay[2]">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product" />
+                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product"/>
                 <button class="btn btn-success" @onclick="AddProduct">
                     Add
                 </button>
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Action</th>
-                        </tr>
+                    <tr>
+                        <th>Product</th>
+                        <th>Action</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var product in Products)
-                        {
-                            <tr>
-                                <td>@product</td>
-                                <td>
-                                    @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
-                                    {
-                                        <button @onclick="() => AddProductToFinalList(product)">
-                                            Added
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button @onclick="() => AddProductToFinalList(product)">
-                                            Add to Supplier
-                                        </button>
-                                    }
-                                </td>
-                            </tr>
-                        }
+                    @foreach (var product in Products)
+                    {
+                        <tr>
+                            <td>@product</td>
+                            <td>
+                                @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
+                                {
+                                    <button class="btn" @onclick="() => AddProductToFinalList(product)">
+                                        Added
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn" @onclick="() => AddProductToFinalList(product)" >
+                                        Add to Supplier
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer" style="@StyleDisplay[2]">
-            <button @onclick="SaveSupplier">
+            <button class="btn" @onclick="SaveSupplier">
                 Save
             </button>
         </div>
