@@ -22,12 +22,12 @@
     {
         <div class="row">
             <div class="col-md-3">
-                <CreateSurveySidebar Categories="supplier.Categories" Questions="newSurvey.Questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
+                <CreateSurveySidebar Categories="supplier.Categories" Risks="supplier.RelevantRisks" Questions="newSurvey.Questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
             </div>
             <div class="col-md-9">
                 @if (addingNew)
                 {
-                    <CreateQuestionCard Category="selectedQuestionCategory" CreateQuestionCallback="CreateQuestion"/>
+                    <CreateQuestionCard Risk="selectedRisk" CreateQuestionCallback="CreateQuestion"/>
                 }
                 else
                 {
@@ -52,14 +52,14 @@
     [Parameter]
     public string SupplierId { get; set; }
 
-    private List<Question> questions { get; set; }
+    private Supplier supplier;
+    
     private CreateSurveyDTO newSurvey;
+    private List<Question> questions { get; set; }
 
     int selectedQuestionIndex;
-    RiskCategory selectedQuestionCategory;
-    Risk selectedQuestionRisk;
+    Risk selectedRisk;
 
-    Supplier? supplier;
 
     private string newName = "";
 
@@ -72,9 +72,7 @@
         await LoadQuestions();
         newSurvey = new CreateSurveyDTO();
         newSurvey.Questions = new List<CreateQuestionDTO>();
-        selectedQuestionCategory = supplier.Categories.First();
-        selectedQuestionRisk = supplier.RelevantRisks.First();
-        Console.WriteLine(selectedQuestionCategory.CategoryName);
+        selectedRisk = supplier.RelevantRisks.First();
         StateHasChanged();
 
     }
@@ -92,10 +90,10 @@
         
     }
     //Invoked form sidebar - Show create question card
-    private void AddQuestion(RiskCategory category)
+    private void AddQuestion(Risk risk)
     {
         addingNew = true;
-        selectedQuestionCategory = category;
+        selectedRisk = risk;
         StateHasChanged();
     }
     //Invoked form Create Question Card - adds the question to the view
@@ -114,8 +112,7 @@
     {
         addingNew = false;
         selectedQuestionIndex = newSurvey.Questions.IndexOf(question);
-        selectedQuestionCategory = newSurvey.Questions[selectedQuestionIndex].RiskCategory;
-        selectedQuestionRisk = newSurvey.Questions[selectedQuestionIndex].RelatedRisk;
+        selectedRisk = newSurvey.Questions[selectedQuestionIndex].RelatedRisk;
         StateHasChanged();
     }
 
@@ -125,7 +122,6 @@
         {
             newSurvey.SupplierId = supplier.Id;
             newSurvey.CreatorId = 1;
-            newSurvey.Questions[selectedQuestionIndex].RelatedRisk = selectedQuestionRisk;
             await _surveyHttpClient.CreateSurveyAsync(newSurvey);
             navMgr.NavigateTo($"/SupplierProfile/{SupplierId}");
 
