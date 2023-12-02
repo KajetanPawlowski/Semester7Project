@@ -7,7 +7,6 @@
 @inject ISupplierHttpClient _supplierHttpClient
 @inject NavigationManager navMgr
 @attribute [Authorize(Policy = "isWoltUser")]
-<h3>Add Supplier</h3>
 
 <style>
  
@@ -23,6 +22,7 @@
 
 
 <div class="card-container">
+    <h1>Add Supplier</h1>
     <div class="card">
         <div class="card-title">
             <h6>Supplier Details:</h6>
@@ -39,7 +39,7 @@
             <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
         </div>
         <div class="card-footer" style="@StyleDisplay[0]">
-            <button @onclick="() => ShowNext(0)">
+            <button @onclick="() => ShowNext(0)" class="btn">
                 Next
             </button>
         </div>
@@ -67,7 +67,8 @@
                             <td>@user.FullName</td>
                             <td>@user.Mail</td>
                             <td>
-                                <button @onclick="() => SelectUser(user)">
+
+                                <button class="btn" @onclick="() => SelectUser(user)">
                                     Select User
                                 </button>
                             </td>
@@ -77,7 +78,7 @@
                 </table>
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="ShowAddUser">
+                <button @onclick="ShowAddUser" class="btn">
                     Add User
                 </button>
             </div>
@@ -90,12 +91,12 @@
                 <h6>New Representative:</h6>
             </div>
             <div class="card-body" style="@StyleDisplay[1]">
-                <input type="text" placeholder="Representative name" @bind="newUser.FullName" />
-                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail" />
+                <input type="text" placeholder="Representative name" @bind="newUser.FullName"/>
+                <input type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
                 <!-- Add other input fields for user details -->
             </div>
             <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="SaveNewUser">
+                <button class="btn" @onclick="SaveNewUser">
                     Save User
                 </button>
             </div>
@@ -108,7 +109,7 @@
         </div>
         <div class="card-body" style="@StyleDisplay[2]">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product" />
+                <input type="text" class="form-control" @bind="newProduct" placeholder="Add a new product"/>
                 <button class="btn btn-success" @onclick="AddProduct">
                     Add
                 </button>
@@ -127,13 +128,13 @@
                             <td>
                                 @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
                                 {
-                                    <button @onclick="() => AddProductToFinalList(product)">
+                                    <button class="btn" @onclick="() => AddProductToFinalList(product)">
                                         Added
                                     </button>
                                 }
                                 else
                                 {
-                                    <button @onclick="() => AddProductToFinalList(product)">
+                                    <button class="btn" @onclick="() => AddProductToFinalList(product)" >
                                         Add to Supplier
                                     </button>
                                 }
@@ -145,7 +146,7 @@
             </div>
         </div>
         <div class="card-footer" style="@StyleDisplay[2]">
-            <button @onclick="SaveSupplier">
+            <button class="btn" @onclick="SaveSupplier">
                 Save
             </button>
         </div>

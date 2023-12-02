@@ -143,7 +143,7 @@ p {
     overflow: hidden;
 }
 
-.btn-primary, .seeSurveyBtn {
+.btn, .btn-primary, .seeSurveyBtn {
     padding: 8px 16px;
     background-color: #00C2E8;
     color: #fff;
@@ -214,12 +214,12 @@ p {
 }
 
 
-.card h6 {
+th, h6, .card h6 {
     color: #333;
     font-family: "Roboto Thin", sans-serif;
 }
 
-.card-footer.assessSupplier {
+.card, .card-footer, .card-footer.assessSupplier {
     padding: 10px;
     background-color: #fff;
     border-top: 1px solid #dee2e6;
@@ -261,7 +261,7 @@ p {
 
 
 /* Assess Supplier - company info to look nice */
-.page-container {
+.card-container, .page-container {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
