@@ -9,6 +9,19 @@
 @attribute [Authorize(Policy = "isWoltUser")]
 <h3>Add Supplier</h3>
 
+<style>
+ 
+    .custom-dropdown {
+        width: 100%;
+        max-width: 200px; 
+    }
+
+    .custom-option {
+        width: 100%; 
+    }
+</style>
+
+
 <div class="card-container">
     <div class="card">
         <div class="card-title">
@@ -16,7 +29,13 @@
         </div>
         <div class="card-body" style="@StyleDisplay[0]">
             <input type="text" placeholder="Company Name" @bind="toCreate.SupplierName" />
-            <input type="text" placeholder="Country Code" @bind="toCreate.CountryCode" />
+            <select class="custom-dropdown" @bind="toCreate.CountryCode">
+                <option>Select a country</option>
+                @foreach (Country item in _countries)
+                {
+                    <option class="custom-option" value="@item.CCode">@item.CountryName</option>
+                }
+            </select>
             <input type="number" placeholder="Headcount" @bind="toCreate.HeadCount" />
         </div>
         <div class="card-footer" style="@StyleDisplay[0]">
@@ -35,25 +54,25 @@
             <div class="card-body" style="@StyleDisplay[1]">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Representative Name</th>
-                            <th>Rep. Mail</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Representative Name</th>
+                        <th>Rep. Mail</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Users)
-                        {
-                            <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Mail</td>
-                                <td>
-                                    <button @onclick="() => SelectUser(user)">
-                                        Select User
-                                    </button>
-                                </td>
-                            </tr>
-                        }
+                    @foreach (var user in Users)
+                    {
+                        <tr>
+                            <td>@user.FullName</td>
+                            <td>@user.Mail</td>
+                            <td>
+                                <button @onclick="() => SelectUser(user)">
+                                    Select User
+                                </button>
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -95,32 +114,32 @@
                 </button>
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Action</th>
-                        </tr>
+                    <tr>
+                        <th>Product</th>
+                        <th>Action</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var product in Products)
-                        {
-                            <tr>
-                                <td>@product</td>
-                                <td>
-                                    @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
-                                    {
-                                        <button @onclick="() => AddProductToFinalList(product)">
-                                            Added
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button @onclick="() => AddProductToFinalList(product)">
-                                            Add to Supplier
-                                        </button>
-                                    }
-                                </td>
-                            </tr>
-                        }
+                    @foreach (var product in Products)
+                    {
+                        <tr>
+                            <td>@product</td>
+                            <td>
+                                @if (toCreate.SuppliedProducts != null && toCreate.SuppliedProducts.FirstOrDefault(p => p.Equals(product)) != null)
+                                {
+                                    <button @onclick="() => AddProductToFinalList(product)">
+                                        Added
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button @onclick="() => AddProductToFinalList(product)">
+                                        Add to Supplier
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -136,6 +155,8 @@
 @code {
     // Shuffling effect
     private string[] StyleDisplay = new string[] { "display : block", "display : none", "display : none" };
+
+    private List<Country> _countries = new List<Country>();
 
     private SupplierCreationDTO toCreate = new SupplierCreationDTO();
     private List<User> Users = new List<User>();
@@ -196,12 +217,18 @@
     protected override async void OnInitialized()
     {
         await LoadUsers();
+        await LoadCountries();
     }
 
     private async Task LoadUsers()
     {
         Users = await _userHttpClient.GetUsersAsync();
         toCreate.SuppliedProducts ??= new List<string>();
+    }
+    
+    async Task LoadCountries()
+    {
+        _countries = await _supplierHttpClient.GetAllCountries();
     }
 
 }
