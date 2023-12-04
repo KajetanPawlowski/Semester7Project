@@ -43,7 +43,7 @@
                 <!-- Main Content -->
                 @if (isAddingNew)
                 {
-                    <AddRiskCard Category="@selectedCategory" SaveRiskNotify="SaveRisk"/>
+                    <AddRiskCard Category="@selectedCategory" SaveRiskNotify="SaveRisk" GenericRisks="genericRisk"/>
                 }
                 else
                 {
@@ -84,6 +84,7 @@
     Supplier? supplier;
 
     List<Risk> risks;
+    List<Risk> genericRisk;
     int selectedRiskIndex;
     RiskCategory selectedCategory;
 
@@ -96,6 +97,7 @@
     {
         Console.WriteLine("Hello");
         await LoadSupplier();
+        await LoadGeneralRisk();
         await LoadRisk();
         
     }
@@ -112,10 +114,6 @@
         try
         {
             risks = supplier.RelevantRisks;
-            if (risks == null || !risks.Any())
-            {
-                risks = await LoadGeneralRisk(); 
-            }
             selectedRiskIndex = risks.IndexOf(risks.First());
             selectedCategory = risks[selectedRiskIndex].Category;
         }
@@ -133,9 +131,9 @@
         }
     }
 
-    private async Task<List<Risk>> LoadGeneralRisk()
+    private async Task LoadGeneralRisk()
     {
-        return await _surveyHttpClient.GetGenericRisksAsync();
+        genericRisk = await _surveyHttpClient.GetGenericRisksAsync();
     }
     
     //If of No Categories - go back
@@ -190,7 +188,7 @@
         Risk risk = await _surveyHttpClient.AddRiskAsync(dto);
         risks.Add(risk);
         isAddingNew = false;
-        StateHasChanged();
+        SelectRisk(risk);
     }
     
     //Invoked in the risk display card Qualify  Risk (OPEN THE QUALIFY CARD PAGE)

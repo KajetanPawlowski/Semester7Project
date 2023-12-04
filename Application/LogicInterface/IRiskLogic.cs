@@ -5,7 +5,7 @@ namespace Application.LogicInterface;
 
 public interface IRiskLogic
 {
-    Task<Risk> CreateRisk(string riskName, int riskCategoryId);
+    Task<Risk> CreateRisk(CreateRiskDTO dto);
     Task<RiskAttribute> CreateRiskAttributeFromFile(string type, int score, string description);
     Task<RiskCategory> CreateRiskCategoryFromFile(string name);
     Task<RiskCategory> GetRiskCategoryById(int categoryId);

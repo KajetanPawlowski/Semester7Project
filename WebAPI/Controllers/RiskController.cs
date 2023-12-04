@@ -22,7 +22,7 @@ public class RiskController : ControllerBase
     {
         try
         {
-            Risk risk = await _riskLogic.CreateRisk(dto.Name, dto.Category.CategoryId);
+            Risk risk = await _riskLogic.CreateRisk(dto);
             return Created($"/Risk/{risk.Id}", risk);
         }
         catch (Exception e)
