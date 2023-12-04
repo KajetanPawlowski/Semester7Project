@@ -4,8 +4,9 @@
 @inject ISupplierHttpClient SupplierHttpClient
 @inject IUserHttpClient UserHttpClient
 @inject NavigationManager navMgr
-@attribute [Authorize]
+@attribute [Authorize(Policy = "isWoltUser")]
 <PageTitle>Home page- Wolt</PageTitle>
+
 
 <div class="container mt-4 page-container">
     <h1 class="mb-4">List of Suppliers</h1>
@@ -38,9 +39,11 @@
                     <td>@item.CountryCode</td>
                     <td>@_userMails.FirstOrDefault(u => u.Id == item.RepresentativeId).Mail</td>
                     <td>
-                        <button class="btn btn-success me-2" @onclick="() => AssessSupplier(item)">
-                            Assess Supplier
-                        </button>
+                        <AuthorizeView Policy="isWoltSpecialist">
+                            <button class="btn btn-success me-2" @onclick="() => AssessSupplier(item)">
+                                Assess Supplier
+                            </button>
+                        </AuthorizeView>
                         <button class="btn btn-info" @onclick="() => OpenSupplierProfile(item)">
                             Open Supplier Profile
                         </button>
