@@ -20,12 +20,16 @@ public class RiskLogic : IRiskLogic
         _riskDao = riskDao;
     }
     
-    public async Task<Risk> CreateRisk(string riskName, int riskCategoryId)
+    public async Task<Risk> CreateRisk(CreateRiskDTO dto)
     {
+        if (dto.Id >= 0)
+        {
+            return await _riskDao.GetByIdAsync(dto.Id);
+        }
         Risk genericRisk = new Risk
         {
-            Name = riskName,
-            Category = await GetRiskCategoryById(riskCategoryId)
+            Name = dto.Name,
+            Category = await GetRiskCategoryById(dto.CategoryId)
         };
         return await _riskDao.CreateAsync(genericRisk);
 
