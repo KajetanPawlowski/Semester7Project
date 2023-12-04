@@ -1,7 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @using HttpClients.Interfaces
+@using Domain.Model
 @inject NavigationManager navMgr
 @inject IAuthHttpClient authService
+@inject ISupplierHttpClient _supplierHttpClient
+@inject NavigationManager _navMgr
 
 <PageTitle>Yuho's Dungeon</PageTitle>
 
@@ -13,7 +16,7 @@
     <main>
         <div class="top-row px-4 d-flex justify-content-between align-items-center">
             <div>
-                <img src="img/Logo.png" alt="Wolt Logo" class="logo-img">
+                <img src="img/Logo.png" alt="Wolt Logo" class="logo-img" @onclick="NavigateHome">
                 <LoginButtons/>
             </div>
         </div>
@@ -23,3 +26,36 @@
         </article>
     </main>
 </div>
+
+@code{
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    async Task NavigateHome()
+    {
+        try
+        {
+            var authenticationState = await authenticationStateTask;
+            var user = authenticationState.User;
+            if (user.IsInRole("woltSpecialist") || user.IsInRole("woltUser"))
+            {
+                _navMgr.NavigateTo("/SuppliersOverview");
+            }
+            else if (user.IsInRole("woltSupplier"))
+            {
+                Supplier supplier = await _supplierHttpClient.GetSupplierByRepMail(user.Identity.Name);
+                _navMgr.NavigateTo($"/SupplierProfile/{supplier.Id}");
+            }
+            else
+            {
+                _navMgr.NavigateTo("/");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Can not navigate Home");
+        }
+        
+    }
+
+}

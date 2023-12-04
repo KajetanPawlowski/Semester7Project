@@ -13,6 +13,15 @@
                     Add
                 </button>
             </div>
+            @foreach (var generic in GenericRisks.Where(r => r.Category.CategoryId == Category.CategoryId))
+            {
+                <div class="input-group">
+                    <label  class="form-control" >@generic.Name</label>
+                    <button class="btn btn-success" @onclick="()=>AttachRisk(generic)">
+                        Add
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -21,15 +30,30 @@
     public RiskCategory Category { get; set; }
     [Parameter]
     public EventCallback<CreateRiskDTO> SaveRiskNotify { get; set; }
-    
+    [Parameter]
+    public List<Risk> GenericRisks { get; set; }
+
     string newRiskName;
 
     async Task AddRisk()
     {
         CreateRiskDTO riskDto = new()
         {
-            Category = Category,
+            //Id = -1 Create a new rik in the risk table
+            Id = -1,
+            CategoryId = Category.CategoryId,
             Name = newRiskName
+        };
+        await SaveRiskNotify.InvokeAsync(riskDto);
+    }
+
+    async Task AttachRisk(Risk risk)
+    {
+        CreateRiskDTO riskDto = new()
+        {//Id not -1 - reference the risk
+            Id = risk.Id,
+            CategoryId = risk.Category.CategoryId,
+            Name = risk.Name
         };
         await SaveRiskNotify.InvokeAsync(riskDto);
     }
