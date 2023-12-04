@@ -54,6 +54,8 @@
     {
         toCreate = new CreateQuestionDTO();
         toCreate.AllAnswers ??= new List<string>();
+        //-1 id - CREATE A Brand new Question
+        toCreate.Id = -1;
         toCreate.RiskCategory = Risk.Category;
         toCreate.RelatedRisk = Risk;
 

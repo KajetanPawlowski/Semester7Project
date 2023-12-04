@@ -5,6 +5,7 @@
 @inject IUserHttpClient UserHttpClient
 @inject NavigationManager navMgr
 @attribute [Authorize]
+<AuthorizeView Policy="isWoltUser">
 <PageTitle>Home page- Wolt</PageTitle>
 
 <div class="container mt-4 page-container">
@@ -52,6 +53,7 @@
         <button class="btn btn-primary addSupplierBtn" @onclick="AddSupplier">Add Supplier</button>
     }
 </div>
+</AuthorizeView>
 
 
 

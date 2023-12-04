@@ -1,0 +1,38 @@
+@using Domain.DTO
+@using Domain.Model
+<div class="row">
+    <h5 class="">@toCreate.Body</h5>
+    @foreach (var answer in toCreate.AllAnswers)
+    {
+            <p>@answer</p>
+    }
+    <button class="btn btn-success" @onclick="CreateQuestion">Add Question</button>
+</div>
+
+@code {
+    [Parameter]
+    public Action<CreateQuestionDTO> CreateQuestionCallback { get; set; }
+    
+    [Parameter]
+    public Question _question { get; set; }
+    
+    private CreateQuestionDTO toCreate;
+
+    protected override void OnInitialized()
+    {
+        toCreate = new CreateQuestionDTO
+        {
+            Id = _question.Id,
+            Body = _question.Body,
+            AllAnswers = _question.AllAnswers,
+            RiskCategory = _question.Category,
+            RelatedRisk = _question.RelevantRisk
+        };
+    }
+
+    private void CreateQuestion()
+    {
+        CreateQuestionCallback?.Invoke(toCreate);
+    }
+
+}
