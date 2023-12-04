@@ -2,7 +2,9 @@
 @using HttpClients.Interfaces
 @using Domain.Model
 @using HttpClients.Implementations
+@using Domain.DTO
 @inject ISupplierHttpClient _supplierHttpClient
+@inject ISurveyHttpClient _surveyHttpClient
 @attribute [Authorize]
 
 @inject NavigationManager navMgr
@@ -22,7 +24,14 @@
                 <th>Survey Name</th>
                 <th>Creation Time</th>
                 <th>Answered Time</th>
-                <th>Answer Survey</th>
+                <AuthorizeView Policy="isWoltSupplier">
+                    <th>Answer Survey</th> 
+                </AuthorizeView>
+                <AuthorizeView Policy="isWoltUser">
+                    <th>See Survey Answers</th>
+                    <th>Re-send Survey</th>
+                </AuthorizeView>
+                
             </tr>
             </thead>
             <tbody>
@@ -35,11 +44,20 @@
                     {
                         <td>@item.AnsweredTime</td>
                         <td><button class="feed-buttons seeSurveyBtn btn" @onclick="() => AnswerSurvey(item)">See Answers</button></td>
+                        <AuthorizeView Policy="isWoltUser">
+                            <td><button @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                        </AuthorizeView>                                                                                                          
                     }
                     else
                     {
                         <td>Pending...</td>
-                        <td><button class="feed-buttons answerSurveyBtn btn" @onclick="() => AnswerSurvey(item)">Answer Survey</button></td>
+                        <AuthorizeView Policy="isWoltSupplier">
+                            <td><button class="feed-buttons answerSurveyBtn btn" @onclick="() => AnswerSurvey(item)">Answer Survey</button></td>
+                        </AuthorizeView>
+                        <AuthorizeView Policy="isWoltUser">
+                            <td>Waiting for @supplier.CompanyName to answer</td>
+                            <td><button @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                        </AuthorizeView>
                     }
                 </tr>
             }
@@ -52,7 +70,7 @@
     // Cascading parameter
     [Parameter]
     public string SupplierId { get; set; }
-
+    
     private Supplier? supplier;
     private List<Survey>?  _surveys;
     private string msg = "";
@@ -70,7 +88,8 @@
             int SupplierIdInt = int.Parse(SupplierId);
             supplier = await _supplierHttpClient.GetSupplierById(SupplierIdInt);
             _surveys = await _supplierHttpClient.GetSurveys(SupplierIdInt);
-            
+            _surveys.Reverse();
+
         }
         catch (Exception e)
         {
@@ -83,9 +102,44 @@
     {
         navMgr.NavigateTo("/AnswerSurvey/"+ survey.Id);
     }
-    
-    
 
+    public async Task ResendSurvey(Survey survey)
+    {
+        try
+        {
+            List<CreateQuestionDTO> questionDto = survey.Questions.Select(q => new CreateQuestionDTO
+            {
+                Body = q.Body,
+                AllAnswers = q.AllAnswers,
+                RiskCategory = q.Category,
+                RelatedRisk = q.RelevantRisk,
+                CCode = q.CCode,
+                CompanySize = q.RelevantCompanySize
+            }).ToList();
+            
+            CreateSurveyDTO surveyDto = new CreateSurveyDTO
+            {
+                SupplierId = survey.SupplierId,
+                CreatorId = survey.CreatorId,
+                Questions = questionDto
+            };
+            
+            Survey copy = await _surveyHttpClient.CreateSurveyAsync(surveyDto);
+            Console.WriteLine($"Original Name: {survey.Name}");
+            copy.Name = "Copy of " + survey.Name;
+            Console.WriteLine($"New Name: {copy.Name}");
+            copy.SupplierId = survey.SupplierId;
+            
+            StateHasChanged();
+            await Load();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+    }
     
-
+    
 }
