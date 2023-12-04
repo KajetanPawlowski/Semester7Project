@@ -97,8 +97,8 @@
     {
         Console.WriteLine("Hello");
         await LoadSupplier();
-        await LoadGeneralRisk();
         await LoadRisk();
+        await LoadGeneralRisk();
         
     }
 
@@ -134,6 +134,10 @@
     private async Task LoadGeneralRisk()
     {
         genericRisk = await _surveyHttpClient.GetGenericRisksAsync();
+        foreach (var risk in risks)
+        {
+            genericRisk.RemoveAll(r => r.Id == risk.Id);
+        }
     }
     
     //If of No Categories - go back
@@ -188,6 +192,7 @@
         Risk risk = await _surveyHttpClient.AddRiskAsync(dto);
         risks.Add(risk);
         isAddingNew = false;
+        await LoadGeneralRisk();
         SelectRisk(risk);
     }
     
