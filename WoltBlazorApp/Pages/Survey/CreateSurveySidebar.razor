@@ -1,29 +1,34 @@
 ﻿@using Domain.Model
 @using Domain.DTO
 <!-- Side Menu -->
-                <div class="sidebar">
-                    <ul class="list-group">
-                        @foreach (var category in Categories)
-                        {
-                            <li class="list-group-item">
-                                <h5>@category.CategoryName</h5>
-                                @foreach (var risk in Risks.Where(r => r.Category.CategoryId == category.CategoryId))
-                                {
-                                    <h6>@risk.Name</h6>
-                                    @foreach (var question in Questions.Where(q => q.RelatedRisk.Id == risk.Id))
-                                    {
-                                        <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
-                                            - @question.Body
-                                        </div>
-                                    }
-                                    <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(risk)">
-                                        + Add Question
-                                    </div>
-                                }
-                            </li>
-                        }
-                    </ul>
-                </div>
+<div class="sidebar">
+    <ul class="list-group">
+        @foreach (var category in Categories)
+        {
+            <li class="list-group-item">
+                <h5>@category.CategoryName</h5>
+                @foreach (var risk in Risks.Where(r => r.Category.CategoryId == category.CategoryId))
+                {
+                    <h6>@risk.Name</h6>
+                    @foreach (var question in Questions.Where(q => q.RelatedRisk.Id == risk.Id))
+                    {
+                        <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
+                            - @question.Body
+                        </div>
+                    }
+                    <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(risk)">
+                        + Add Question
+                    </div>
+                }
+            </li>
+        }
+    <div class="card-footer">
+        <button @onclick="SaveSurveyNotify">
+            Save Survey
+        </button>
+    </div>
+    </ul>
+</div>
 
 @code {
     [Parameter]
@@ -36,6 +41,8 @@
     public EventCallback<CreateQuestionDTO> SelectQuestionNotify { get; set; }
     [Parameter]
     public EventCallback<Risk> AddQuestionNotify { get; set; }
+    [Parameter]
+    public Action SaveSurveyNotify { get; set; }
     
 
     void SelectQuestion(CreateQuestionDTO currentQuestion)

@@ -22,7 +22,7 @@
     {
         <div class="row">
             <div class="col-md-3">
-                <CreateSurveySidebar Categories="supplier.Categories" Risks="supplier.RelevantRisks" Questions="newSurvey.Questions" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
+                <CreateSurveySidebar Categories="supplier.Categories" Risks="supplier.RelevantRisks" Questions="newSurvey.Questions" SaveSurveyNotify="async () => await SaveSurvey()" AddQuestionNotify="AddQuestion" SelectQuestionNotify="SelectQuestion"/>
             </div>
             <div class="col-md-9">
                 @if (addingNew)
@@ -30,7 +30,7 @@
                     <CreateQuestionCard Risk="selectedRisk" CreateQuestionCallback="CreateQuestion"/>
                     @foreach (var question in questions)
                     {
-                        <AddQuestionCard _question="question" CreateQuestionCallback="CreateQuestion"/>;
+                        <AddQuestionCard _question="question" _selectedRisk="selectedRisk" CreateQuestionCallback="CreateQuestion"/>;
                     }
                 }
                 else
@@ -41,11 +41,11 @@
                     }
                    
                 }
-                <div class="card-footer">
-                    <button @onclick="SaveSurvey">
-                        Save Survey
-                    </button>
-                </div>
+                @* <div class="card-footer"> *@
+                @*     <button @onclick="SaveSurvey"> *@
+                @*         Save Survey *@
+                @*     </button> *@
+                @* </div> *@
             </div>
            
         </div> 
