@@ -1,7 +1,6 @@
 ﻿@page "/SupplierProfile/{SupplierId}"
-@using HttpClients.Interfaces
 @using Domain.Model
-@using HttpClients.Implementations
+@using HttpClients.Interfaces
 @inject ISupplierHttpClient _supplierHttpClient
 @attribute [Authorize]
 
@@ -54,7 +53,7 @@
     public string SupplierId { get; set; }
 
     private Supplier? supplier;
-    private List<Survey>?  _surveys;
+    private List<Domain.Model.Survey>?  _surveys;
     private string msg = "";
     
 
@@ -79,7 +78,7 @@
         }
     }
 
-    private void AnswerSurvey(Survey survey)
+    private void AnswerSurvey(Domain.Model.Survey survey)
     {
         navMgr.NavigateTo("/AnswerSurvey/"+ survey.Id);
     }
