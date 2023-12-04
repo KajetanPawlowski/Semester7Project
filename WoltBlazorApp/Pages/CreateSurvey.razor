@@ -28,6 +28,10 @@
                 @if (addingNew)
                 {
                     <CreateQuestionCard Risk="selectedRisk" CreateQuestionCallback="CreateQuestion"/>
+                    @foreach (var question in questions)
+                    {
+                        <AddQuestionCard _question="question" CreateQuestionCallback="CreateQuestion"/>;
+                    }
                 }
                 else
                 {
@@ -87,6 +91,7 @@
     private async Task LoadQuestions()
     {
         questions = await _surveyHttpClient.GetQuestionsAsync(supplier.Id);
+        Console.WriteLine(questions.Count);
         
     }
     //Invoked form sidebar - Show create question card
@@ -99,7 +104,7 @@
     //Invoked form Create Question Card - adds the question to the view
     private void CreateQuestion(CreateQuestionDTO newQuestion)
     {
-        
+        newQuestion.CCode = supplier.CountryCode;
         newSurvey.Questions.Add(newQuestion);
         addingNew = false;
         StateHasChanged();
