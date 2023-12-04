@@ -4,40 +4,42 @@
 @using Domain.DTO
 @inject ISurveyHttpClient _surveyHttpClient
 @inject NavigationManager navMgr
-<h3>AnswerSurvey</h3>
-@if (survey == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <div class="card">
-        @foreach (var question in survey.Questions)
-        {
-            if (survey.AnsweredTime == null)
+<div class="page-container">
+    <h1>Answer Survey</h1>
+    @if (survey == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <div class="card">
+            @foreach (var question in survey.Questions)
             {
-                <AnswerQuestionCard QuestionAnsweredNotify="AnswerQuestion" Display="question"/>
+                if (survey.AnsweredTime == null)
+                {
+                    <AnswerQuestionCard QuestionAnsweredNotify="AnswerQuestion" Display="question"/>
+                }
+                else
+                {
+                    <ShowAnswerCard Display="question"/>
+                }
             }
-            else
-            {
-                <ShowAnswerCard Display="question"/>
-            }
-        }
-        <div class="card-footer">
-            @if (survey.AnsweredTime == null)
-            {
-                <button class="btn " @onclick="SaveSurvey">Continue</button>
-            }
-            else
-            {
-                <button class="btn " @onclick="GoBack">Go back</button>
-            }
-            
-            <span>@errormsg</span>
+            <div class="card-footer">
+                @if (survey.AnsweredTime == null)
+                {
+                    <button class="btn " @onclick="SaveSurvey">Continue</button>
+                }
+                else
+                {
+                    <button class="btn " @onclick="GoBack">Go back</button>
+                }
+
+                <span>@errormsg</span>
+            </div>
         </div>
-    </div>
-    
-}
+
+    }
+</div>
 
 @code {
     [Parameter]
