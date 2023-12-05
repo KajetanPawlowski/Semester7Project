@@ -68,7 +68,7 @@ public class UserLogic : IUserLogic
         return _userDao.GetAllAsync();
     }
 
-    /*public async Task<User> NotifySupplier(NotifySupplierDTO dto)
+    public async Task<User> NotifySupplier(NotifySupplierDTO dto)
     {
         User user = await _userDao.GetByIdAsync(dto.userId);
         // Sender's email address and credentials
@@ -106,7 +106,7 @@ public class UserLogic : IUserLogic
         }
 
         return user;
-    }*/
+    }
 
     private static void ValidateRegistrationData(RegisterUserDTO userToCreate)
     {

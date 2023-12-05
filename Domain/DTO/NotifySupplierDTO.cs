@@ -1,6 +1,6 @@
-﻿/*namespace Domain.DTO;
+﻿namespace Domain.DTO;
 
 public class NotifySupplierDTO
 {
     public int userId { get; set; }
-}*/
+}

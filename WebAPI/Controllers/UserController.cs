@@ -49,7 +49,7 @@ public class UserController: ControllerBase
         }
     }
     
-    /*//Send email to supplier
+    //Send email to supplier
     [HttpPost("Notify")]
     [AllowAnonymous]
     public async Task<ActionResult<User>> NotifySupplierAsync(NotifySupplierDTO dto)
@@ -67,5 +67,5 @@ public class UserController: ControllerBase
         }
 
         return Ok(user);
-    }*/
+    }
 }
