@@ -50,8 +50,8 @@ public class SurveyLogic : ISurveyLogic
                 attributeMatch.AddRange(relevantQuestions.Where(q => GetImpactedGroupAttribute(q).AttributeId == impactedGroup.AttributeId));
             }
         }
-
-        return attributeMatch;
+        //reduce the list to distinct questions by Id
+        return attributeMatch.Distinct().ToList();
     }
 
     private RiskAttribute GetRiskMappingAttribute(Question question)
