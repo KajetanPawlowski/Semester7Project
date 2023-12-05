@@ -42,8 +42,7 @@ public class QuestionInstantDAO : IQuestionDAO
     public Task<IEnumerable<Question>> GetByCategory(RiskCategory category)
     {
         IEnumerable<Question> questions = context.Questions
-            .Where(q => q.Category.Equals(category))
-            .ToList();
+            .Where(q => q.Category.CategoryId == category.CategoryId);
 
         return Task.FromResult(questions);
     }
