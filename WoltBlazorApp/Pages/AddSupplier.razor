@@ -51,65 +51,23 @@
             </button>
         </div>
     </div>
-
-    @if (UserExist)
-    {
-        <div class="card">
-            <div class="card-title">
-                <h6>Representative:</h6>
-            </div>
-            <div class="card-body" style="@StyleDisplay[1]">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Representative Name</th>
-                        <th>Rep. Mail</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var user in Users)
-                    {
-                        <tr>
-                            <td>@user.FullName</td>
-                            <td>@user.Mail</td>
-                            <td>
-
-                                <button class="btn" @onclick="() => SelectUser(user)">
-                                    Select User
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer" style="@StyleDisplay[1]">
-                <button @onclick="ShowAddUser" class="btn">
-                    Add User
-                </button>
-            </div>
+    
+    <div class="card">
+        <div class="card-title">
+            <h6>New Representative:</h6>
         </div>
-    }
-    else
-    {
-        <div class="card">
-            <div class="card-title">
-                <h6>New Representative:</h6>
-            </div>
-            <div class="card-body" style="@StyleDisplay[1]">
-                <input class="custom-input" type="text" placeholder="Representative name" @bind="newUser.FullName"/>
-                <input class="custom-input" type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
-                <!-- Add other input fields for user details -->
-            </div>
-            <div class="card-footer" style="@StyleDisplay[1]">
-                <button class="btn" @onclick="SaveNewUser">
-                    Save User
-                </button>
-            </div>
+        <div class="card-body" style="@StyleDisplay[1]">
+            <input class="custom-input" type="text" placeholder="Representative name" @bind="newUser.FullName"/>
+            <input class="custom-input" type="text" placeholder="Representative Mail" @bind="newUser.UserMail"/>
+            <!-- Add other input fields for user details -->
         </div>
-    }
-
+        <div class="card-footer" style="@StyleDisplay[1]">
+            <button class="btn" @onclick="SaveNewUser">
+                Save Representative
+            </button>
+        </div>
+    </div>
+    
     <div class="card">
         <div class="card-title">
             <h6>Supplied Products:</h6>
@@ -169,7 +127,7 @@
     private SupplierCreationDTO toCreate = new SupplierCreationDTO();
     private List<User> Users = new List<User>();
     private bool UserExist = true;
-    private RegisterUserDTO newUser; 
+    private RegisterUserDTO newUser = new RegisterUserDTO(); 
     private User selectedUser = new User();
 
     private List<string> Products = new List<string> { "Fish", "Meat", "Vegetables" };
@@ -181,11 +139,11 @@
         StyleDisplay[current + 1] = "display : block";
     }
 
-    private void ShowAddUser()
+    /*private void ShowAddUser()
     {
         UserExist = false;
         newUser = new RegisterUserDTO();
-    }
+    }*/
 
     private async Task SaveNewUser()
     {
@@ -194,12 +152,12 @@
         ShowNext(1);
     }
 
-    private void SelectUser(User user)
+    /*private void SelectUser(User user)
     {
         selectedUser = user;
         toCreate.RepresentativeId = user.Id;
         ShowNext(1);
-    }
+    }*/
 
     private void AddProductToFinalList(string product)
     {

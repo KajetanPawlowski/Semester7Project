@@ -4,6 +4,7 @@
 @using Domain.DTO
 @inject ISupplierHttpClient _supplierHttpClient
 @inject ISurveyHttpClient _surveyHttpClient
+@inject IUserHttpClient _userHttpClient
 @attribute [Authorize]
 
 @inject NavigationManager navMgr
@@ -29,6 +30,7 @@
                 <AuthorizeView Policy="isWoltUser">
                     <th>See Survey Answers</th>
                     <th>Re-send Survey</th>
+                    <th>Send Email</th>
                 </AuthorizeView>
                 
             </tr>
@@ -56,6 +58,7 @@
                         <AuthorizeView Policy="isWoltUser">
                             <td>Waiting for @supplier.CompanyName to answer</td>
                             <td><button class="btn" @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                            <td><button class="btn" @onclick="() => SendEmail(item)">Send Email</button></td>
                         </AuthorizeView>
                     }
                 </tr>
@@ -136,6 +139,21 @@
             throw;
         }
         
+    }
+    private async Task SendEmail(Domain.Model.Survey survey)
+    {
+        try
+        {
+            int representativeId = supplier.RepresentativeId;
+            
+            NotifySupplierDTO dto = new NotifySupplierDTO { userId = representativeId };
+            await _userHttpClient.NotifySupplierAsync(dto);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     
