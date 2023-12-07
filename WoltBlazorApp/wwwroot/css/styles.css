@@ -50,6 +50,12 @@ h3{
     color: white;
     font-family: "Roboto Thin", sans-serif;
 }
+
+h6{
+    font-size: 1rem;
+    font-family: "Roboto Thin", sans-serif;
+}
+
 p {
     margin-bottom: 10px;
     font-family: "Roboto Thin", sans-serif;
@@ -194,6 +200,16 @@ p {
     margin-top: 20px;
 }
 
+.input-group{
+    margin-bottom: 10px;
+    
+}
+
+.custom-dropdown{
+    height: 30px;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
 
 /*Assess supplier risk + categories table extra styling*/
@@ -218,7 +234,8 @@ p {
 }
 
 
-th, h6, .card h6 {
+th, .card h6 {
+    
     color: #333;
     font-family: "Roboto Thin", sans-serif;
 }
