@@ -1,6 +1,6 @@
 @using Domain.DTO
 @using Domain.Model
-@if (toCreate.RiskCategory == _selectedRisk.Category)
+@if (toCreate.QuestionCategory.Id == _SelectedQuestionCategory.Id)
 {
 <div class="card">
     <h5 class="">@toCreate.Body</h5>
@@ -16,7 +16,7 @@
     [Parameter]
     public Action<CreateQuestionDTO> CreateQuestionCallback { get; set; }
     [Parameter]
-    public Risk _selectedRisk { get; set; }
+    public QuestionCategory _SelectedQuestionCategory { get; set; }
     
     [Parameter]
     public Question _question { get; set; }
@@ -30,8 +30,7 @@
             Id = _question.Id,
             Body = _question.Body,
             AllAnswers = _question.AllAnswers,
-            RiskCategory = _selectedRisk.Category,
-            RelatedRisk = _selectedRisk
+            QuestionCategory = _SelectedQuestionCategory
         };
     }
 
