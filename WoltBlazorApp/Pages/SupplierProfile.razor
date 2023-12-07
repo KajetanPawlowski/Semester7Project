@@ -108,10 +108,10 @@
         {
             List<CreateQuestionDTO> questionDto = survey.Questions.Select(q => new CreateQuestionDTO
             {
+                Id = q.Id,
                 Body = q.Body,
                 AllAnswers = q.AllAnswers,
-                RiskCategory = q.Category,
-                RelatedRisk = q.RelevantRisk,
+                QuestionCategory = q.QuestionCategory,
                 CCode = q.CCode,
                 CompanySize = q.RelevantCompanySize
             }).ToList();

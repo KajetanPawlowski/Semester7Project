@@ -37,7 +37,7 @@
     {
         <div class="row">
             <div class="col-md-3 backBox">
-                <AssessSupplierRiskSidebar Categories="supplier.Categories" Risks="risks" AddRiskNotify="AddRisk" SelectRiskNotify="SelectRisk"/>
+                <AssessSupplierRiskSidebar Categories="supplier.RiskCategories" Risks="risks" AddRiskNotify="AddRisk" SelectRiskNotify="SelectRisk"/>
             </div>
             <div class="col-md-9">
                 <!-- Main Content -->
@@ -118,13 +118,13 @@
         }
         catch (Exception e)
         {
-            if (!supplier.Categories.Any() || supplier.Categories == null)
+            if (!supplier.RiskCategories.Any() || supplier.RiskCategories == null)
             {
                 hasCategories = false;
             }
             else
             {
-                selectedCategory = supplier.Categories.First();
+                selectedCategory = supplier.RiskCategories.First();
             }
             isAddingNew = true;
         }
@@ -215,13 +215,13 @@
             }
             else
             {
-                if (!supplier.Categories.Any() || supplier.Categories == null)
+                if (!supplier.RiskCategories.Any() || supplier.RiskCategories == null)
                 {
                     hasCategories = false;
                 }
                 else
                 {
-                    selectedCategory = supplier.Categories.First();
+                    selectedCategory = supplier.RiskCategories.First();
                 }
                 isAddingNew = true;
             }
