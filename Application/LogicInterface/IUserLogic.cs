@@ -11,5 +11,5 @@ public interface IUserLogic
     Task<User?> GetByIdAsync(int userId);
     Task<User?> GetByUserMailAsync(string userMail);
     Task<List<User>> GetUsersAsync();
-    // Task<User> NotifySupplier(NotifySupplierDTO dto);
+    Task<User> NotifySupplier(NotifySupplierDTO dto);
 }

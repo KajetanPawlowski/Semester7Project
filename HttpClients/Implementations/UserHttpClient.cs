@@ -1,4 +1,6 @@
+using System.Net.Http.Json;
 using System.Text.Json;
+using Domain.DTO;
 using Domain.Model;
 using HttpClients.Interfaces;
 
@@ -41,5 +43,23 @@ public class UserHttpClient : IUserHttpClient
             PropertyNameCaseInsensitive = true
         })!;
         return users;
+    }
+    
+    public async Task<User> NotifySupplierAsync(NotifySupplierDTO dto)
+    {
+        HttpResponseMessage response = await client.PostAsJsonAsync("User/Notify", dto);
+        string result = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(result);
+        }
+
+        User user = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+
+        return user;
     }
 }

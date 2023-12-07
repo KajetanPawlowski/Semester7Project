@@ -10,6 +10,7 @@ public class Supplier
     public List<string>? SuppliedProducts { get; set; }
     public string CountryCode { get; set; }
     
-    public List<RiskCategory> Categories { get; set; }
+    public List<RiskCategory> RiskCategories { get; set; }
+    public List<QuestionCategory> QuestionCategories { get; set; } 
     public List<Risk> RelevantRisks { get; set; }
 }

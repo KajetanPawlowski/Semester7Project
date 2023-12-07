@@ -80,6 +80,15 @@ public class InstantDataContext
             
         }
     }
+    public IList<QuestionCategory> QuestionCategories
+    {
+        get
+        {
+            LoadData();
+            return dataContainer!.QuestionCategories;
+            
+        }
+    }
 
     private void LoadData()
     {
@@ -96,7 +105,8 @@ public class InstantDataContext
                 Questions = new List<Question>(),
                 RiskAttributes = new List<RiskAttribute>(),
                 RiskCategories = new List<RiskCategory>(),
-                Countries = new List<Country>()
+                Countries = new List<Country>(),
+                QuestionCategories = new List<QuestionCategory>()
             };
             return;
         }

@@ -39,22 +39,14 @@ public class QuestionInstantDAO : IQuestionDAO
         return await Task.FromResult(existing);
     }
 
-    public Task<IEnumerable<Question>> GetByCategory(RiskCategory category)
+    public Task<IEnumerable<Question>> GetByCategory(QuestionCategory category)
     {
         IEnumerable<Question> questions = context.Questions
-            .Where(q => q.Category.CategoryId == category.CategoryId);
+            .Where(q => q.QuestionCategory.Id == category.Id);
 
         return Task.FromResult(questions);
     }
-
-    public Task<IEnumerable<Question>> GetByAttribute(RiskAttribute attribute)
-    {
-        IEnumerable<Question> questions = context.Questions
-            .Where(q => q.RelevantRisk.RiskAttributes.Where(a => a.AttributeId == attribute.AttributeId)!=null)
-            .ToList();
-
-        return Task.FromResult(questions);
-    }
+    
 
     public Task<List<Question>> GetAllAsync()
     {

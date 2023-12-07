@@ -6,7 +6,6 @@ public interface IQuestionDAO
 {
     Task<Question> CreateAsync(Question question);
     Task<Question> GetByIdAsync(int questionId);
-    Task<IEnumerable<Question>> GetByCategory(RiskCategory category);
-    Task<IEnumerable<Question>> GetByAttribute(RiskAttribute attribute);
+    Task<IEnumerable<Question>> GetByCategory(QuestionCategory category);
     Task<List<Question>> GetAllAsync();
 }
