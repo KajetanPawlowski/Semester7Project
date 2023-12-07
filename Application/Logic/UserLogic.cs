@@ -1,9 +1,11 @@
 using System.Net;
-using System.Net.Mail;
+using MimeKit;
+using MailKit.Net.Smtp;
 using Application.DAOInterface;
 using Application.LogicInterface;
 using Domain.DTO;
 using Domain.Model;
+using MailKit.Security;
 
 namespace Application.Logic;
 
@@ -73,7 +75,7 @@ public class UserLogic : IUserLogic
         User user = await _userDao.GetByIdAsync(dto.userId);
         // Sender's email address and credentials
         string senderEmail = "woltsusteam7@gmail.com";
-        string senderPassword = "Semester7Project!";
+        string senderPassword = "wryh rjmb wwbp fone";
 
         string subject = "Login Information";
         string body = $"Dear {user.FullName},\n\nHere is your login information:\n\n" +
@@ -82,28 +84,29 @@ public class UserLogic : IUserLogic
                       $"Click the link below to log in:\n" +
                       "http://localhost:5145/";
 
-        // Create and configure the email message
-        MailMessage mailMessage = new MailMessage(senderEmail, user.Mail, subject, body);
-        mailMessage.IsBodyHtml = false; // Set to true if you want to use HTML in the email body
+        // Create and configure the email message using MimeKit
+        var emailMessage = new MimeMessage();
+        emailMessage.From.Add(new MailboxAddress("Wolt Denmark", senderEmail));
+        emailMessage.To.Add(new MailboxAddress(user.FullName, user.Mail));
+        emailMessage.Subject = subject;
 
-        // Create and configure the SMTP client
-        SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
-        smtpClient.Port = 25;
-        smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
-        smtpClient.UseDefaultCredentials = false;
-        smtpClient.EnableSsl = true;
+        var bodyBuilder = new BodyBuilder();
+        bodyBuilder.TextBody = body;
+        emailMessage.Body = bodyBuilder.ToMessageBody();
 
-        try
+        // Create and configure the SMTP client using MimeKit
+        using (var client = new SmtpClient())
         {
-            // Send the email
-            smtpClient.Send(mailMessage);
-            Console.WriteLine("Email sent successfully!");
+            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            // Disable certificate validation
+            
+            await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(senderEmail, senderPassword);
+            await client.SendAsync(emailMessage);
+            await client.DisconnectAsync(true);
         }
-        catch (Exception ex)
-        {
-          
-            throw new Exception("Error sending email: ");
-        }
+
+        Console.WriteLine("Email sent now successfully!");
 
         return user;
     }
