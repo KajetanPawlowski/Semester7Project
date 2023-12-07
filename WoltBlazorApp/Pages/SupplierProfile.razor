@@ -44,7 +44,7 @@
                         <td>@item.AnsweredTime</td>
                         <td><button class="feed-buttons seeSurveyBtn btn" @onclick="() => AnswerSurvey(item)">See Answers</button></td>
                         <AuthorizeView Policy="isWoltUser">
-                            <td><button @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                            <td><button class="btn" @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
                         </AuthorizeView>                                                                                                          
                     }
                     else
@@ -55,7 +55,7 @@
                         </AuthorizeView>
                         <AuthorizeView Policy="isWoltUser">
                             <td>Waiting for @supplier.CompanyName to answer</td>
-                            <td><button @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                            <td><button class="btn" @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
                         </AuthorizeView>
                     }
                 </tr>
