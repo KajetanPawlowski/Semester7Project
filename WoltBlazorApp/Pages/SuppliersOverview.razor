@@ -86,7 +86,7 @@
 
     private void AssessSupplier(Supplier supplier )
     {
-        if (supplier.Categories == null || !supplier.Categories.Any())
+        if (supplier.RiskCategories == null || !supplier.RiskCategories.Any())
         {
             navMgr.NavigateTo($"/AssessSupplier/{supplier.Id}/Categories");
         }

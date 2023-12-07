@@ -14,9 +14,10 @@ public class SupplierLogic : ISupplierLogic
     private readonly ISurveyDAO _surveyDao;
     private readonly IRiskAttributeDAO _riskAttributeDao;
     private readonly ICountryDAO _countryDao;
+    private readonly IQuestionCategoryDAO _questionCategoryDao;
     
     public SupplierLogic(IUserDAO userDao, ISupplierDAO supplierDao, IRiskCategoryDAO riskCategoryDao, 
-        ISurveyDAO surveyDao,IRiskDAO riskDao, IRiskAttributeDAO attributeDao, ICountryDAO countryDao)
+        ISurveyDAO surveyDao,IRiskDAO riskDao, IRiskAttributeDAO attributeDao, ICountryDAO countryDao, IQuestionCategoryDAO questionCategoryDao)
     {
         _userDao = userDao;
         _supplierDao = supplierDao;
@@ -25,14 +26,15 @@ public class SupplierLogic : ISupplierLogic
         _surveyDao = surveyDao;
         _riskAttributeDao = attributeDao;
         _countryDao = countryDao;
+        _questionCategoryDao = questionCategoryDao;
     }
     public async Task<Supplier> AssignNewRiskCategory(int supplierId, int categoryId)
     {
         Supplier toUpdate = await _supplierDao.GetByIdAsync(supplierId);
         RiskCategory category = await _riskCategoryDao.GetByIdAsync(categoryId);
-        if (toUpdate.Categories.FirstOrDefault(cat => cat.CategoryId == category.CategoryId) == null)
+        if (toUpdate.RiskCategories.FirstOrDefault(cat => cat.CategoryId == category.CategoryId) == null)
         {
-            toUpdate.Categories.Add(category);
+            toUpdate.RiskCategories.Add(category);
         }
         return await _supplierDao.UpdateAsync(toUpdate);
     }
@@ -60,7 +62,7 @@ public class SupplierLogic : ISupplierLogic
             toUpdate.RelevantRisks[index] = specificRisk;
         }
 
-        Supplier result = await _supplierDao.UpdateAsync(toUpdate);
+        Supplier result = await _supplierDao.UpdateAsync(await AddQuestionCategory(toUpdate, specificRisk));
         return result;
     }
     
@@ -94,6 +96,21 @@ public class SupplierLogic : ISupplierLogic
         }
         
     }
+
+    private async Task<Supplier> AddQuestionCategory(Supplier supplier, Risk relevantRisk)
+    {
+        QuestionCategory newCategory = new QuestionCategory
+        {
+            RiskCategoryId = relevantRisk.Category.CategoryId,
+            RiskMappingId = relevantRisk.RiskAttributes
+                .FirstOrDefault(a => a.AttributeType.Equals("Risk types (mapping)")).AttributeId,
+            ImpactedGroupId = relevantRisk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Impacted group - most affected group")).AttributeId
+        };
+        newCategory = await _questionCategoryDao.CreateAsync(newCategory);
+        
+        supplier.QuestionCategories.Add(newCategory);
+        return supplier;
+    }
     public Task<Supplier> GetSupplierByMail(string supplierMail)
     {
         return _supplierDao.GetByIdAsync(_userDao.GetByMailAsync(supplierMail).Id);
@@ -120,8 +137,9 @@ public class SupplierLogic : ISupplierLogic
             Headcount = dto.HeadCount,
             CountryCode = dto.CountryCode,
             
-            Categories = new List<RiskCategory>(),
-            RelevantRisks = new List<Risk>()
+            RiskCategories = new List<RiskCategory>(),
+            RelevantRisks = new List<Risk>(),
+            QuestionCategories = new List<QuestionCategory>()
         
         };
         return await _supplierDao.CreateAsync(toCreate);
