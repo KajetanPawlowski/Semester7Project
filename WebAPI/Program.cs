@@ -30,7 +30,7 @@ builder.Services.AddScoped<IRiskDAO, RiskInstantDAO>();
 builder.Services.AddScoped<IUserDAO, UserInstantDao>();
 builder.Services.AddScoped<ISurveyDAO, SurveyInstantDAO>();
 builder.Services.AddScoped<ICountryDAO, CountryInstantDAO>();
-
+builder.Services.AddScoped<IQuestionCategoryDAO, QuestionCategoryInstantDAO>();
 //Add Logic
 builder.Services.AddScoped<ISupplierLogic, SupplierLogic>();
 builder.Services.AddScoped<ISurveyLogic, SurveyLogic>();

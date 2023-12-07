@@ -7,23 +7,23 @@
         {
             <li class="list-group-item">
                 <h5>@category.CategoryName</h5>
-                @foreach (var risk in Risks.Where(r => r.Category.CategoryId == category.CategoryId))
+                @foreach (var questionCategory in QuestionCategories.Where(r => r.RiskCategoryId== category.CategoryId))
                 {
-                    <h6>@risk.Name</h6>
-                    @foreach (var question in Questions.Where(q => q.RelatedRisk.Id == risk.Id))
+                    <h6>@questionCategory.Name</h6>
+                    @foreach (var question in Questions.Where(q => q.QuestionCategory.Id == questionCategory.Id))
                     {
                         <div @onclick="() => SelectQuestion(question)" class="list-group-item list-group-item-action">
                             - @question.Body
                         </div>
                     }
-                    <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(risk)">
+                    <div class="list-group-item list-group-item-action" @onclick="() => OpenAddQuestion(questionCategory)">
                         + Add Question
                     </div>
                 }
             </li>
         }
     <div class="card-footer">
-        <button @onclick="SaveSurveyNotify">
+        <button class="btn" @onclick="SaveSurveyNotify">
             Save Survey
         </button>
     </div>
@@ -34,13 +34,13 @@
     [Parameter]
     public List<RiskCategory> Categories { get; set; }
     [Parameter]
-    public List<Risk> Risks { get; set; }
+    public List<QuestionCategory> QuestionCategories { get; set; }
     [Parameter]
     public List<CreateQuestionDTO> Questions { get; set; }
     [Parameter]
     public EventCallback<CreateQuestionDTO> SelectQuestionNotify { get; set; }
     [Parameter]
-    public EventCallback<Risk> AddQuestionNotify { get; set; }
+    public EventCallback<QuestionCategory> AddQuestionNotify { get; set; }
     [Parameter]
     public Action SaveSurveyNotify { get; set; }
     
@@ -50,8 +50,8 @@
         SelectQuestionNotify.InvokeAsync(currentQuestion);
     }
 
-    void OpenAddQuestion(Risk risk)
+    void OpenAddQuestion(QuestionCategory questionCategory)
     {
-        AddQuestionNotify.InvokeAsync(risk);
+        AddQuestionNotify.InvokeAsync(questionCategory);
     }
 }

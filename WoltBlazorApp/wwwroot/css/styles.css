@@ -46,7 +46,7 @@ h1 {
     font-family: "Roboto Thin", sans-serif;
 }
 h3{
-    font-size: 2rem;
+    font-size: 1rem;
     color: white;
     font-family: "Roboto Thin", sans-serif;
 }
@@ -242,6 +242,7 @@ th, h6, .card h6 {
     cursor: pointer;
 }
 
+
 .assessSupplier button {
     padding: 8px 16px;
     font-size: 1rem;
@@ -301,8 +302,6 @@ th, h6, .card h6 {
     padding: 20px;
     margin-bottom: 20px;
 }
-
-
 
 
 

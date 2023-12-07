@@ -12,57 +12,35 @@ public class SurveyLogic : ISurveyLogic
     private readonly IUserDAO _userDao;
     private readonly IRiskCategoryDAO _riskCategoryDao;
     private readonly IRiskAttributeDAO _riskAttributeDao;
-    private readonly IRiskDAO _riskDao;
+    private readonly IQuestionCategoryDAO _questionCategoryDao;
     private readonly ISupplierDAO _supplierDao;
     private readonly ISurveyDAO _surveyDao;
     private readonly IQuestionDAO _questionDao;
 
     public SurveyLogic(IUserDAO userDao, ISupplierDAO supplierDao, IRiskCategoryDAO riskCategoryDao,
-        ISurveyDAO surveyDao, IRiskDAO riskDao, IQuestionDAO questionDao, IRiskAttributeDAO riskAttributeDao)
+        ISurveyDAO surveyDao, IQuestionDAO questionDao, IRiskAttributeDAO riskAttributeDao, IQuestionCategoryDAO questionCategoryDao)
     {
         _userDao = userDao;
         _supplierDao = supplierDao;
         _riskCategoryDao = riskCategoryDao;
-        _riskDao = riskDao;
+        _questionCategoryDao = questionCategoryDao;
         _surveyDao = surveyDao;
         _questionDao = questionDao;
         _riskAttributeDao = riskAttributeDao;
+        
     }
 
     public async Task<List<Question>> GenerateQuestions(int supplierId)
     {
         Supplier supplier = await _supplierDao.GetByIdAsync(supplierId);
         List<Question> relevantQuestions = new List<Question>();
-        foreach (RiskCategory category in supplier.Categories)
+        foreach (QuestionCategory category in supplier.QuestionCategories)
         {
             relevantQuestions.AddRange(await _questionDao.GetByCategory(category));
         }
-        List<Question> attributeMatch = new List<Question>();
-        foreach (var relevantRisk in supplier.RelevantRisks)
-        {
-            foreach (var riskMapping in relevantRisk.RiskAttributes.Where(a => a.AttributeType.Equals("Risk types (mapping)")))
-            {
-                attributeMatch.AddRange(relevantQuestions.Where(q => GetRiskMappingAttribute(q).AttributeId == riskMapping.AttributeId));
-            }
-
-            foreach (var impactedGroup in relevantRisk.RiskAttributes.Where(a => a.AttributeType.Equals("Impacted group - most affected group")))
-            {
-                attributeMatch.AddRange(relevantQuestions.Where(q => GetImpactedGroupAttribute(q).AttributeId == impactedGroup.AttributeId));
-            }
-        }
-        //reduce the list to distinct questions by Id
-        return attributeMatch.Distinct().ToList();
+        return relevantQuestions.Distinct().ToList();
     }
-
-    private RiskAttribute GetRiskMappingAttribute(Question question)
-    {
-        return question.RelevantRisk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Risk types (mapping)"));
-    }
-
-    private RiskAttribute GetImpactedGroupAttribute(Question question)
-    {
-        return question.RelevantRisk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Impacted group - most affected group"));
-    }
+    
 
     public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)
     {
@@ -71,7 +49,16 @@ public class SurveyLogic : ISurveyLogic
         List<Question> questions = new List<Question>();
         foreach (var questionDto in dto.Questions)
         {
-            questions.Add(await AddQuestion(questionDto));
+            //if ID -1 = request to add brand new question
+            if (questionDto.Id < 0)
+            {
+                questions.Add(await AddQuestion(questionDto));
+            }
+            else
+            {
+                questions.Add(await _questionDao.GetByIdAsync(questionDto.Id));
+            }
+            
         }
 
         Supplier supplier = await _supplierDao.GetByIdAsync(dto.SupplierId);
@@ -97,13 +84,11 @@ public class SurveyLogic : ISurveyLogic
     public async Task<Question> AddQuestion(CreateQuestionDTO dto)
     {
         //Add question each time new is created!!!
-        await ValidateQuestionCreationDTO(dto);
         Question toCreate = new()
         {
             Body = dto.Body,
             AllAnswers = dto.AllAnswers,
-            Category = dto.RiskCategory,
-            RelevantRisk = dto.RelatedRisk,
+            QuestionCategory = dto.QuestionCategory,
             CCode = dto.CCode,
             RelevantCompanySize = dto.CompanySize
         };
@@ -137,30 +122,7 @@ public class SurveyLogic : ISurveyLogic
     {
         //validate if the questions exist
     }
-
-    private async Task ValidateQuestionCreationDTO(CreateQuestionDTO dto)
-    {
-        try
-        {
-
-            await _riskCategoryDao.GetByIdAsync(dto.RiskCategory.CategoryId);
-        }
-
-        catch (RiskNotFound riskNotFound)
-        {
-            await _riskDao.CreateAsync(dto.RelatedRisk);
-        }
-        catch (RiskCategoryNotFound categoryNotFound)
-        {
-            await _riskCategoryDao.CreateAsync(dto.RiskCategory);
-        }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
+    
 
     private void CheckForAnswers(Question question)
     {
