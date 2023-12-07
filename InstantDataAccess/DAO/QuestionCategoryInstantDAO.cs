@@ -13,7 +13,9 @@ public class QuestionCategoryInstantDAO : IQuestionCategoryDAO
     }
     public Task<QuestionCategory> CreateAsync(QuestionCategory category)
     {
-        IEnumerable<QuestionCategory> existing  = context.QuestionCategories.Where(cat => cat.RiskMappingId == category.RiskMappingId);
+        IEnumerable<QuestionCategory> existing =
+            context.QuestionCategories.Where(cat => cat.RiskCategoryId == category.RiskCategoryId);
+        existing  = existing.Where(cat => cat.RiskMappingId == category.RiskMappingId);
         existing = existing.Where(cat => cat.ImpactedGroupId == category.ImpactedGroupId);
         
         if (existing.Any())
