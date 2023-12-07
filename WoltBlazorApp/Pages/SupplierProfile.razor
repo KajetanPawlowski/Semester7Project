@@ -1,7 +1,6 @@
 ﻿@page "/SupplierProfile/{SupplierId}"
 @using HttpClients.Interfaces
 @using Domain.Model
-@using HttpClients.Implementations
 @using Domain.DTO
 @inject ISupplierHttpClient _supplierHttpClient
 @inject ISurveyHttpClient _surveyHttpClient
@@ -72,7 +71,7 @@
     public string SupplierId { get; set; }
     
     private Supplier? supplier;
-    private List<Survey>?  _surveys;
+    private List<Domain.Model.Survey>?  _surveys;
     private string msg = "";
     
 
@@ -98,12 +97,12 @@
         }
     }
 
-    private void AnswerSurvey(Survey survey)
+    private void AnswerSurvey(Domain.Model.Survey survey)
     {
         navMgr.NavigateTo("/AnswerSurvey/"+ survey.Id);
     }
 
-    public async Task ResendSurvey(Survey survey)
+    public async Task ResendSurvey(Domain.Model.Survey survey)
     {
         try
         {
@@ -124,10 +123,8 @@
                 Questions = questionDto
             };
             
-            Survey copy = await _surveyHttpClient.CreateSurveyAsync(surveyDto);
-            Console.WriteLine($"Original Name: {survey.Name}");
+            Domain.Model.Survey copy = await _surveyHttpClient.CreateSurveyAsync(surveyDto);
             copy.Name = "Copy of " + survey.Name;
-            Console.WriteLine($"New Name: {copy.Name}");
             copy.SupplierId = survey.SupplierId;
             
             StateHasChanged();

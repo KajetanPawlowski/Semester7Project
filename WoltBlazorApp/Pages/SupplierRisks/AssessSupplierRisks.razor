@@ -95,7 +95,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Hello");
         await LoadSupplier();
         await LoadRisk();
         await LoadGeneralRisk();
@@ -204,11 +203,11 @@
         StateHasChanged();
     }
     //Invoked from risk display - REMOVE ONLY from the view
-    private void RemoveRisk(Risk risk)
+    private async Task RemoveRisk(Risk risk)
     {
         if (risk.RiskAttributes == null)
         {
-            risks.Remove(risk);
+            risks.RemoveAll(r => r.Id == risk.Id);
             if (risks.Any())
             {
                 selectedRiskIndex = risks.IndexOf(risks.First());
@@ -227,6 +226,7 @@
                 isAddingNew = true;
             }
         }
+        await LoadGeneralRisk();
         StateHasChanged();
     }
     
