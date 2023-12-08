@@ -91,4 +91,5 @@ public class RiskLogic : IRiskLogic
     {
         return _riskDao.GetAllAsync();
     }
+    
 }
