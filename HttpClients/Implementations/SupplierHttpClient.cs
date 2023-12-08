@@ -181,8 +181,8 @@ public class SupplierHttpClient : ISupplierHttpClient
 
     public async Task<Supplier> GetSupplierByRepMail(string repEmail)
     {
-        string serializedMail = JsonSerializer.Serialize(repEmail);
-        HttpResponseMessage response = await client.GetAsync("/Supplier?repEmail="+serializedMail);
+        string encodedMail = Uri.EscapeDataString(repEmail);
+        HttpResponseMessage response = await client.GetAsync("/Supplier?repEmail="+encodedMail);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
