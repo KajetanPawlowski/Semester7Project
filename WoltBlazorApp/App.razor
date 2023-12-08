@@ -3,8 +3,10 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <img height="227.4774774774775px" src="https://media0.giphy.com/media/wYC0pfFNlkXHkdttV6/giphy.gif?cid=de9bf95e09lx8rzzqj6d9gc8v36o3h53ly0bk3zrso106tmy&amp;ep=v1_gifs_search&amp;rid=giphy.gif&amp;ct=g" width="404px" itemtype="http://schema.skype.com/Giphy" key="gif_0">
-                    <p>You need to log in!</p>
+                    <div style="position: relative; text-align: center;">
+                        <h1 style="color: whitesmoke; position: absolute; top: 50%; left: 40%; transform: translate(-50%, -50%); z-index: 1;">You need to log in!</h1>
+                        <img class="errorImage" src="https://media0.giphy.com/media/wYC0pfFNlkXHkdttV6/giphy.gif?cid=de9bf95e09lx8rzzqj6d9gc8v36o3h53ly0bk3zrso106tmy&amp;ep=v1_gifs_search&amp;rid=giphy.gif&amp;ct=g" width="404px" itemtype="http://schema.skype.com/Giphy" key="gif_0">
+                    </div>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
@@ -12,7 +14,10 @@
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <img style="display: block; margin: auto; width: 60%" src="img/TurnOnOff.png">
+                <div style="position: relative; text-align: center;">
+                    <h1 style="color: whitesmoke; position: absolute; top: 10%; left: 50%; transform: translate(-50%, -50%); z-index: 1;">Page Not Found...</h1>
+                    <img id="fullscreen" class="errorImage" src="img/TurnOnOff.png">
+                </div>
             </LayoutView>
         </NotFound>
     </Router>

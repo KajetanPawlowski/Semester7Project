@@ -32,14 +32,41 @@ public class SurveyLogic : ISurveyLogic
 
     public async Task<List<Question>> GenerateQuestions(int supplierId)
     {
-        Supplier supplier = await _supplierDao.GetByIdAsync(supplierId);
-        List<Question> relevantQuestions = new List<Question>();
-        foreach (QuestionCategory category in supplier.QuestionCategories)
+        try
         {
-            relevantQuestions.AddRange(await _questionDao.GetByCategory(category));
+            Supplier supplier = await _supplierDao.GetByIdAsync(supplierId);
+
+            if (supplier != null && supplier.QuestionCategories != null)
+            {
+                List<Question> relevantQuestions = new List<Question>();
+
+                foreach (QuestionCategory category in supplier.QuestionCategories)
+                {
+                    Console.WriteLine(category.Name);
+                    var categoryQuestions = await _questionDao.GetByCategory(category);
+
+                    if (categoryQuestions != null)
+                    {
+                        relevantQuestions.AddRange(categoryQuestions);
+                    }
+                }
+
+                return relevantQuestions.Distinct().ToList();
+            }
+            else
+            {
+                // Handle the case where the supplier or its categories are null.
+                return new List<Question>();
+            }
         }
-        return relevantQuestions.Distinct().ToList();
+        catch (Exception ex)
+        {
+            // Log or handle exceptions appropriately.
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return new List<Question>();
+        }
     }
+
     
 
     public async Task<Survey> CreateSurvey(CreateSurveyDTO dto)

@@ -41,11 +41,28 @@ public class QuestionInstantDAO : IQuestionDAO
 
     public Task<IEnumerable<Question>> GetByCategory(QuestionCategory category)
     {
-        IEnumerable<Question> questions = context.Questions
-            .Where(q => q.QuestionCategory.Id == category.Id);
+        if (category == null)
+        {
+            // Handle the case where the category is null.
+            return Task.FromResult<IEnumerable<Question>>(Enumerable.Empty<Question>());
+        }
 
-        return Task.FromResult(questions);
+        try
+        {
+            IEnumerable<Question> questions = context.Questions
+                .Where(q => q.QuestionCategory != null && q.QuestionCategory.Id == category.Id)
+                .ToList();
+
+            return Task.FromResult(questions ?? Enumerable.Empty<Question>());
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exceptions appropriately.
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return Task.FromResult<IEnumerable<Question>>(Enumerable.Empty<Question>());
+        }
     }
+
     
 
     public Task<List<Question>> GetAllAsync()

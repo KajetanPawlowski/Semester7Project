@@ -28,7 +28,7 @@
                 @if (addingNew)
                 {
                     <CreateQuestionCard _SelectedQuestionCategory="selectedQuestionCategory" CreateQuestionCallback="CreateQuestion"/>
-                    @foreach (var question in questions)
+                    @foreach (var question in questions.Where(q=> q.QuestionCategory.Name.Equals(selectedQuestionCategory.Name)))
                     {
                         <AddQuestionCard _question="question" _SelectedQuestionCategory="selectedQuestionCategory" CreateQuestionCallback="CreateQuestion"/>;
                     }
