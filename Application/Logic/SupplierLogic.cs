@@ -1,3 +1,4 @@
+using System.Globalization;
 using Application.DAOInterface;
 using Application.LogicInterface;
 using Domain.DTO;
@@ -62,7 +63,11 @@ public class SupplierLogic : ISupplierLogic
             toUpdate.RelevantRisks[index] = specificRisk;
         }
 
-        Supplier result = await _supplierDao.UpdateAsync(await AddQuestionCategory(toUpdate, specificRisk));
+        Supplier supplier = await AddQuestionCategory(toUpdate, specificRisk);
+        supplier.RiskScore = await RecalculateRiskScore(supplier);
+
+        Supplier result = await _supplierDao.UpdateAsync(supplier);
+        
         return result;
     }
     
@@ -178,7 +183,45 @@ public class SupplierLogic : ISupplierLogic
     {
         return await _countryDao.GetAllAsync();
     }
+
+    private async Task<double> RecalculateRiskScore(Supplier supplier)
+    {
+        const int MAX_RISK_SCORE = 16;
+        const int MAX_COUNTRY_SCORE = 100;
+        const double RISK_WEIGHT = 0.6;
+        double countryScore = MAX_COUNTRY_SCORE - _countryDao.GetByCCode(supplier.CountryCode).Result.RiskScore;
+        double highestRisk = 0;
+        foreach (var risk in supplier.RelevantRisks)
+        {
+            double newRiskScore = CalculateRiskScore(risk);
+            if (highestRisk < newRiskScore)
+            {
+                highestRisk = newRiskScore;
+            }
+        }
+        double riskScoreNormalized = highestRisk / MAX_RISK_SCORE;
+        double countryScoreNormalized = countryScore / MAX_COUNTRY_SCORE;
+
+        double result = (riskScoreNormalized * RISK_WEIGHT + countryScoreNormalized * (1 - RISK_WEIGHT))*100;
+        
+        return result ;
+    }
+    private double CalculateRiskScore(Risk risk)
+    {
+        int sumWithLikelyhood = 0;
+        foreach (var attribute in risk.RiskAttributes)
+        {
+            sumWithLikelyhood += attribute.Score;
+        }
+
+        RiskAttribute Likelyhood = risk.RiskAttributes.FirstOrDefault(a => a.AttributeType.Equals("Likelihood"));
+
+        int sum = sumWithLikelyhood - Likelyhood.Score;
+        double avgScore = sum / 6.0;
+        return avgScore * Likelyhood.Score;
+    }
     
-    
-    
+
+
+
 }
