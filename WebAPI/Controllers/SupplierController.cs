@@ -32,7 +32,8 @@ public class SupplierController : ControllerBase
             }
             else if (repEmail != null)
             {
-                suppliers.Add(await _supplierLogic.GetSupplierByMail(repEmail));
+                string decodedEmail = Uri.UnescapeDataString(repEmail);
+                suppliers.Add(await _supplierLogic.GetSupplierByMail(decodedEmail));
             }
             else
             {

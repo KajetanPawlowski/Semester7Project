@@ -13,4 +13,5 @@ public class Supplier
     public List<RiskCategory> RiskCategories { get; set; }
     public List<QuestionCategory> QuestionCategories { get; set; } 
     public List<Risk> RelevantRisks { get; set; }
+    public double RiskScore { get; set; }
 }
