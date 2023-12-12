@@ -47,6 +47,7 @@
                         <td><button class="feed-buttons seeSurveyBtn btn" @onclick="() => AnswerSurvey(item)">See Answers</button></td>
                         <AuthorizeView Policy="isWoltUser">
                             <td><button class="btn" @onclick="() => ResendSurvey(item)">Re-send survey</button></td>
+                            <td>Survey answered</td>
                         </AuthorizeView>                                                                                                          
                     }
                     else
